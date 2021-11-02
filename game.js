@@ -14,15 +14,47 @@ currentWave = 1;
 totalNumOfEnemies = 0;
 circlesCoords = new Map();
 selectedTower = -1;
+health = 200;
 waves = [];
-waves.push({ time: 100, number: 40 });
-waves.push({ time: 400, number: 1 });
-waves.push({ time: 40, number: 10 });
-waves.push({ time: 400, number: 1 });
-waves.push({ time: 20, number: 20 });
-waves.push({ time: 400, number: 1 });
+currentLevel = 0;
 
-waves.push({ time: 10, number: 20 });
+waves.push({ time: 100, number: 20 });
+waves.push({ time: 1000, number: 0 });
+waves.push({ time: 40, number: 40 });
+waves.push({ time: 1000, number: 0 });
+waves.push({ time: 30, number: 70 });
+waves.push({ time: 1000, number: 0 });
+waves.push({ time: 20, number: 100 });
+waves.push({ time: Infinity, number: 10 });
+function foriin(arr, action) {
+  for (i = 0; i < arr.length; i++) {
+    action();
+  }
+}
+class upgradeBox {
+  x = 0;
+  y = 0;
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+  drawSelf() {
+    context.fillRect(this.x, this.y, 200, 60);
+
+    context.fillStyle = "white";
+    context.fillText("Upgrade", this.x + 60, this.y + 30);
+    context.fillStyle = "black";
+  }
+  checkMouseUpCollision(whatdo) {
+    if (areColliding(mouseX, mouseY, 30, 30, this.x, this.y, 200, 60)) {
+      whatdo();
+    }
+  }
+}
+upgradeboxes = [];
+upgradeboxes.push(new upgradeBox(700, 300));
+upgradeboxes.push(new upgradeBox(700, 400));
+upgradeboxes.push(new upgradeBox(700, 500));
 
 currentWave = 0;
 money = 300;
@@ -80,7 +112,7 @@ class towerSpawner {
     let numOfCollisions = 0;
     if (money > 200 && this.currentlyDragging == true) {
       if (grid[Math.floor(mouseX / 60)][Math.floor(mouseY / 60)] == 1) {
-        for (i = 0; i < towers.length; i++) {
+        foriin(towers, () => {
           if (
             Math.sqrt(
               Math.pow(mouseX - 10 - towers[i].x, 2) +
@@ -90,7 +122,7 @@ class towerSpawner {
           ) {
             numOfCollisions++;
           }
-        }
+        });
         if (numOfCollisions == 0) {
           towers.push(
             new tower(mouseX - 10, mouseY - 30, "ddz", towers.length)
@@ -140,8 +172,13 @@ class bullet {
     if (
       areColliding(this.x, this.y, 10, 10, this.target.x, this.target.y, 30, 30)
     ) {
-      money += 20;
-      this.target.health -= 20;
+      if (this.dmg < this.target.health) {
+        money += this.dmg * 2;
+      } else {
+        money += health * 2;
+      }
+      //console.log("lmao" + this.dmg);
+      this.target.health -= this.dmg;
       bullets.splice(bullets.indexOf(this), 1);
     }
     if (
@@ -166,13 +203,13 @@ class bullet {
   }
 }
 nodes = [
-  new node(270, 207),
-  new node(505, 207),
-  new node(508, 442),
-  new node(328, 447),
-  new node(325, 266),
-  new node(27, 270),
-  new node(26, 800),
+  new node(275, 210),
+  new node(515, 210),
+  new node(515, 450),
+  new node(330, 450),
+  new node(330, 265),
+  new node(25, 265),
+  new node(25, 610),
 ];
 class tower {
   shootingSpeed = 20;
@@ -187,6 +224,7 @@ class tower {
   enemiesInRange = [];
   closestDistance = [];
   currentRotation = 0;
+  dmg = 5;
 
   constructor(x, y, type, id) {
     this.type = type;
@@ -257,14 +295,14 @@ class tower {
           }
         }
       } catch (e) {
-        console.log("cope");
+        //console.log("cope");
       }
       if (this.closestDistance[1] != undefined) {
         // console.log(enemies[towers[0].closestDistance[1]].x);
         try {
           context.rotate(this.currentRotation);
         } catch (e) {
-          console.log("cope");
+          //console.log("cope");
         }
       }
 
@@ -314,7 +352,10 @@ class tower {
       this.hasntShotIn == this.shootingSpeed &&
       this.closestDistance[0] < this.range
     ) {
-      bullets.push(new bullet(this, enemies[this.closestDistance[1]], 20));
+      //console.log(this.dmg);
+      bullets.push(
+        new bullet(this, enemies[this.closestDistance[1]], this.dmg)
+      );
       //     enemies[closestDistance[1]].health -= 20;
     }
   }
@@ -376,6 +417,7 @@ class enemy {
         }
       } else {
         this.killSelf();
+        health -= 20;
       }
     }
   }
@@ -430,9 +472,10 @@ enemies.push(new enemy(260, 0));
 function update() {
   testSpawner.updatePos();
   updates++;
-  for (i = 0; i < bullets.length; i++) {
+  foriin(bullets, () => {
     bullets[i].flyTo();
-  }
+  });
+
   if (updates % waves[currentWave].time == 0) {
     if (waves[currentWave].number > 0) {
       waves[currentWave].number--;
@@ -446,51 +489,56 @@ function update() {
     enemies.push(new enemy(260, 0, enemies.length));
     enemies[enemies.length - 1].trueId = totalNumOfEnemies;
   }
-
-  for (i = 0; i < enemies.length; i++) {
+  foriin(enemies, () => {
     if (enemies.length > 0) {
       enemies[i].followNext();
     }
-  }
+  });
+
   // for (i = 0; i < towers.length; i++) {
   //   towers[i].aimAt();
   // }
   // Napisanoto tuk se izpulnqva otnovo i otnovo mnogo puti v sekunda
 }
 function draw() {
-  for (i = 0; i < mapImgs.length; i++) {
-    context.drawImage(mapImgs[i], 0, 0, 600, 600);
-  }
-  for (i = 0; i < enemies.length; i++) {
-    if (enemies.length > 0) {
+  context.drawImage(mapImgs[currentLevel], 0, 0, 600, 600);
+  if (enemies.length > 0) {
+    foriin(enemies, () => {
       enemies[i].drawSelf();
-    }
+    });
   }
-  for (i = 0; i < towers.length; i++) {
+  foriin(towers, () => {
     towers[i].drawSelf();
     towers[i].aim();
-  }
+  });
+
   if (mapEditMode == 1) {
-    for (i = 0; i < nodes.length; i++) {
+    foriin(nodes, () => {
       context.fillRect(nodes[i].x, nodes[i].y, 5, 5);
-    }
+    });
   }
 
   if (mapEditMode == 2) {
-    for (i = 0; i < grid.length; i++) {
+    foriin(grid, () => {
       for (j = 0; j < grid[i].length; j++) {
         context.strokeRect(j * 60, i * 60, 60, 60);
       }
-    }
+    });
+    x;
   }
-  for (i = 0; i < bullets.length; i++) {
+  foriin(bullets, () => {
     bullets[i].drawSelf();
-  }
+  });
   // context.drawImage(towerPic, tempTower.x, tempTower.y, 60, 60);
   testSpawner.drawSelf();
   context.font = "20px Ariel";
   context.fillText(money, 20, 20);
-  context.fillRect(700, 300, 100, 100);
+  context.font = "20px Ariel";
+
+  context.fillText(health, 20, 50);
+  foriin(upgradeboxes, () => {
+    upgradeboxes[i].drawSelf();
+  });
 
   // tuk naprogramirai kakvo da se risuva
 }
@@ -498,14 +546,18 @@ output = "";
 
 function keyup(key) {
   // Show the pressed keycode in the console
+  //test redirect
+  //location.href = "https://www.google.com";
+
   console.log("Pressed", key);
   if (mapEditMode == 1) {
     if (key == 32) {
       nodes.push(new node(mouseX, mouseY));
       output = "[";
-      for (i = 0; i < nodes.length; i++) {
+      foriin(nodes, () => {
         output += ", new node(" + nodes[i].x + "," + nodes[i].y + ")";
-      }
+      });
+
       output += "]";
       console.log(output);
     }
@@ -526,31 +578,55 @@ function mousedown() {
   testSpawner.mouseDownUpdate();
 }
 function mouseup() {
+  foriin(upgradeboxes, () => {
+    upgradeboxes[i].checkMouseUpCollision(() => {
+      if (selectedTower != -1) {
+        if (i == 0) {
+          towers[selectedTower].shootingSpeed = Math.floor(
+            towers[selectedTower].shootingSpeed / 1.5
+          );
+          money -= 60;
+        }
+        if (i == 1) {
+          money -= 60;
+
+          towers[selectedTower].dmg += 5;
+        }
+        if (i == 2) {
+          money -= 60;
+
+          towers[selectedTower].range += 5;
+        }
+      }
+    });
+  });
+
   testSpawner.mouseUpUpdate();
   numOfCollisions = 0;
   towerToBeSelected = 0;
-  if (selectedTower != -1) {
-    if (areColliding(mouseX, mouseY, 30, 30, 700, 300, 300, 300)) {
-      towers[selectedTower].shootingSpeed = Math.floor(
-        towers[selectedTower].shootingSpeed / 1.5
-      );
-    }
-  }
+
   if (towers.length > 0) {
-    for (i = 0; i < towers.length; i++) {
+    foriin(towers, () => {
       if (
-        areColliding(mouseX, mouseY, 1, 1, towers[i].x, towers[i].y, 20, 50)
+        areColliding(mouseX, mouseY, 10, 10, towers[i].x, towers[i].y, 20, 50)
       ) {
         numOfCollisions++;
         towerToBeSelected = i;
       }
-    }
+    });
+
     if (numOfCollisions > 0) {
-      for (i = 0; i < towers.length; i++) {
+      foriin(towers, () => {
         towers[i].isSelected = 0;
-      }
+      });
+
       towers[towerToBeSelected].isSelected = 1;
       selectedTower = towerToBeSelected;
+    } else {
+      /*
+      foriin(towers, () => {
+        towers[i].isSelected = 0;
+      });*/
     }
   }
 
