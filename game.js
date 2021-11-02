@@ -15,14 +15,14 @@ totalNumOfEnemies = 0;
 circlesCoords = new Map();
 selectedTower = -1;
 waves = [];
-waves.push({ time: 100, number: 20 });
-waves.push({ time: 1000, number: 1 });
-waves.push({ time: 40, number: 40 });
-waves.push({ time: 1000, number: 1 });
-waves.push({ time: 30, number: 70 });
-waves.push({ time: 1000, number: 1 });
-waves.push({ time: 20, number: 100 });
-waves.push({ time: Infinity, number: 1 });
+waves.push({ time: 100, number: 40 });
+waves.push({ time: 400, number: 1 });
+waves.push({ time: 40, number: 10 });
+waves.push({ time: 400, number: 1 });
+waves.push({ time: 20, number: 20 });
+waves.push({ time: 400, number: 1 });
+
+waves.push({ time: 10, number: 20 });
 
 currentWave = 0;
 money = 300;
@@ -38,71 +38,6 @@ money = 300;
 //     }
 //   }
 // }
-class towerSpawner {
-  x = 0;
-  y = 0;
-  ogX = 0;
-  ogY = 0;
-  type = 0;
-  currentlyDragging = false;
-  constructor(x, y, type) {
-    this.x = x;
-    this.y = y;
-    this.ogX = x;
-    this.ogY = y;
-    this.type = type;
-  }
-  updatePos() {
-    if (this.currentlyDragging) {
-      this.x = mouseX;
-      this.y = mouseY;
-    }
-  }
-  mouseDownUpdate() {
-    if (areColliding(this.x, this.y, 100, 100, mouseX, mouseY, 100, 100)) {
-      this.currentlyDragging = true;
-    }
-  }
-  drawSelf() {
-    context.drawImage(towerPic, this.x, this.y, 60, 60);
-    if (money < 200) {
-      context.fillStyle = "red";
-      context.globalAlpha = 0.4;
-      context.fillRect(this.x + 10, this.y, 37, 60);
-      context.globalAlpha = 1;
-    }
-    context.fillStyle = "black";
-  }
-  mouseUpUpdate() {
-    this.x = this.ogX;
-    this.y = this.ogY;
-
-    let numOfCollisions = 0;
-    if (money > 200 && this.currentlyDragging == true) {
-      if (grid[Math.floor(mouseX / 60)][Math.floor(mouseY / 60)] == 1) {
-        for (i = 0; i < towers.length; i++) {
-          if (
-            Math.sqrt(
-              Math.pow(mouseX - 10 - towers[i].x, 2) +
-                Math.pow(mouseY - 30 - towers[i].y, 2)
-            ) <
-            towers[i].range / 3
-          ) {
-            numOfCollisions++;
-          }
-        }
-        if (numOfCollisions == 0) {
-          towers.push(
-            new tower(mouseX - 10, mouseY - 30, "ddz", towers.length)
-          );
-          money -= 200;
-        }
-      }
-    }
-    this.currentlyDragging = false;
-  }
-}
-testSpawner = new towerSpawner(700, 100);
 class node {
   x = 0;
   y = 0;
@@ -130,8 +65,8 @@ class bullet {
     this.IremberTarget.y -= (this.y - this.IremberTarget.y) * 4;
   }
   flyTo() {
-    let xDistToNextNode = this.x - this.target.x;
-    let yDistToNextNode = this.y - this.target.y;
+    let xDistToNextNode = this.x - this.IremberTarget.x;
+    let yDistToNextNode = this.y - this.IremberTarget.y;
     let dist = Math.sqrt(
       Math.pow(xDistToNextNode, 2) + Math.pow(yDistToNextNode, 2)
     );
@@ -172,7 +107,7 @@ nodes = [
   new node(328, 447),
   new node(325, 266),
   new node(27, 270),
-  new node(26, 700),
+  new node(26, 800),
 ];
 class tower {
   shootingSpeed = 20;
@@ -237,29 +172,18 @@ class tower {
             this.x - enemies[this.closestDistance[1]].x + 15
           ) -
           Math.PI / 2;
-        if (
-          !areColliding(
-            this.currentRotation,
-            1,
-            0.1,
-            0.1,
-            nextRotaion,
-            1,
-            0.1,
-            0,
-            1
-          )
-        ) {
-          if (this.currentRotation < nextRotaion) {
-            this.currentRotation += 0.1;
-          } else {
-            this.currentRotation -= 0.1;
-          }
+        if (this.currentRotation < nextRotaion) {
+          this.currentRotation += 0.1;
+        } else {
+          this.currentRotation -= 0.1;
         }
       } catch (e) {
         console.log("cope");
       }
-      if (this.closestDistance[1] != undefined) {
+      if (
+        this.closestDistance[1] != undefined &&
+        this.closestDistance[0] < this.range
+      ) {
         // console.log(enemies[towers[0].closestDistance[1]].x);
         try {
           context.rotate(this.currentRotation);
@@ -428,7 +352,6 @@ enemies.push(new enemy(260, 0));
 //   }
 // }
 function update() {
-  testSpawner.updatePos();
   updates++;
   for (i = 0; i < bullets.length; i++) {
     bullets[i].flyTo();
@@ -486,8 +409,6 @@ function draw() {
   for (i = 0; i < bullets.length; i++) {
     bullets[i].drawSelf();
   }
-  // context.drawImage(towerPic, tempTower.x, tempTower.y, 60, 60);
-  testSpawner.drawSelf();
   context.font = "20px Ariel";
   context.fillText(money, 20, 20);
   context.fillRect(700, 300, 100, 100);
@@ -521,12 +442,32 @@ function keyup(key) {
     }
     console.log(output);
   }
+  if (key == 32 && mapEditMode == 0) {
+    numOfCollisions = 0;
+    if (money > 200) {
+      if (grid[Math.floor(mouseX / 60)][Math.floor(mouseY / 60)] == 1) {
+        for (i = 0; i < towers.length; i++) {
+          if (
+            Math.sqrt(
+              Math.pow(mouseX - 10 - towers[i].x, 2) +
+                Math.pow(mouseY - 30 - towers[i].y, 2)
+            ) < towers[i].range
+          ) {
+            numOfCollisions++;
+          }
+        }
+        if (numOfCollisions == 0) {
+          towers.push(
+            new tower(mouseX - 10, mouseY - 30, "ddz", towers.length)
+          );
+          money -= 200;
+        }
+      }
+    }
+  }
 }
-function mousedown() {
-  testSpawner.mouseDownUpdate();
-}
+
 function mouseup() {
-  testSpawner.mouseUpUpdate();
   numOfCollisions = 0;
   towerToBeSelected = 0;
   if (selectedTower != -1) {
@@ -539,7 +480,7 @@ function mouseup() {
   if (towers.length > 0) {
     for (i = 0; i < towers.length; i++) {
       if (
-        areColliding(mouseX, mouseY, 10, 10, towers[i].x, towers[i].y, 20, 50)
+        areColliding(mouseX, mouseY, 1, 1, towers[i].x, towers[i].y, 20, 50)
       ) {
         numOfCollisions++;
         towerToBeSelected = i;
@@ -551,10 +492,6 @@ function mouseup() {
       }
       towers[towerToBeSelected].isSelected = 1;
       selectedTower = towerToBeSelected;
-    } else {
-      for (i = 0; i < towers.length; i++) {
-        towers[i].isSelected = 0;
-      }
     }
   }
 
