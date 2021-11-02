@@ -8,6 +8,8 @@ circleImg = new Image();
 circleImg.src = "tqkrug.png";
 robotPic = new Image();
 robotPic.src = "robot1.png";
+towerPic = new Image();
+towerPic.src = "tower1big.png";
 currentWave = 1;
 totalNumOfEnemies = 0;
 circlesCoords = new Map();
@@ -105,6 +107,7 @@ class tower {
   isSelected = 0;
   recievedEvent = 0;
   enemiesInRange = [];
+  closestDistance = [];
 
   constructor(x, y, type, id) {
     this.type = type;
@@ -151,7 +154,21 @@ class tower {
       } else {
         context.fillStyle = "blue";
       }
-      context.fillRect(this.x, this.y, 20, 40);
+      context.save();
+      context.translate(this.x + 15, this.y + 15);
+      if (this.closestDistance[1] != undefined) {
+        // console.log(enemies[towers[0].closestDistance[1]].x);
+        context.rotate(
+          Math.atan2(
+            this.y - enemies[this.closestDistance[1]].y,
+            this.x - enemies[this.closestDistance[1]].x
+          ) -
+            Math.PI / 2
+        );
+      }
+
+      context.drawImage(towerPic, -32, -32, 64, 64);
+      context.restore();
       context.fillStyle = "rgb(0,0,0,50)";
     }
   }
@@ -160,15 +177,15 @@ class tower {
     if (this.hasntShotIn > this.shootingSpeed + 1) {
       this.hasntShotIn = 0;
     }
-    let closestDistance = [9999, 9999];
+    this.closestDistance = [9999, 9999];
     let distanceToMe = 0;
     for (let i = 0; i < enemies.length; i++) {
       distanceToMe = Math.sqrt(
         Math.pow(this.x - enemies[i].x, 2) + Math.pow(this.y - enemies[i].y, 2)
       );
-      if (distanceToMe < closestDistance[0]) {
-        closestDistance[0] = distanceToMe;
-        closestDistance[1] = i;
+      if (distanceToMe < this.closestDistance[0]) {
+        this.closestDistance[0] = distanceToMe;
+        this.closestDistance[1] = i;
       }
       if (distanceToMe < this.range) {
         if (this.isSelected == 1) {
@@ -194,9 +211,9 @@ class tower {
     }
     if (
       this.hasntShotIn == this.shootingSpeed &&
-      closestDistance[0] < this.range
+      this.closestDistance[0] < this.range
     ) {
-      bullets.push(new bullet(this, enemies[closestDistance[1]], 20));
+      bullets.push(new bullet(this, enemies[this.closestDistance[1]], 20));
       //     enemies[closestDistance[1]].health -= 20;
     }
   }
