@@ -1,10 +1,27 @@
 // Creating variables
 let updates = 0;
-mapEditMode = false;
+mapEditMode = 0;
 mapImgs = [];
 mapImgs[0] = new Image();
 mapImgs[0].src = "map1fixed.png";
+circleImg = new Image();
+circleImg.src = "tqkrug.png";
 currentWave = 1;
+totalNumOfEnemies = 0;
+circlesCoords = new Map();
+
+// function drawCircle(radius) {
+//   if (circlesCoords.get(radius) != undefined) {
+//   } else {
+//     circlesCoords.set(radius, []);
+//     for (i = -Math.PI; i < Math.PI; i += 0.02) {
+//       circlesCoords.get(radius).push({
+//         xCoords: 10 + radius * Math.cos(i),
+//         yCoords: radius * Math.sin(i),
+//       });
+//     }
+//   }
+// }
 class node {
   x = 0;
   y = 0;
@@ -24,62 +41,106 @@ nodes = [
 ];
 class tower {
   shootingSpeed = 60;
-  hasntShotIn = 60;
+  hasntShotIn = 0;
   type = "";
   x = 0;
   y = 0;
-  currentTarget = 0;
-  range = 100;
+  range = 120;
   myId = 0;
+  isSelected = 0;
+  recievedEvent = 0;
+  enemiesInRange = [];
+
   constructor(x, y, type, id) {
     this.type = type;
     this.x = x;
     this.y = y;
     this.myId = id;
+    // drawCircle(this.range);
+
+    // for (let i = 0; i < towers.length; i++) {
+    //   towers[i].isSelected = 0;
+    // }
+    // this.isSelected = 1;
   }
   drawSelf() {
-    context.fillStyle = "red";
-    context.fillRect(this.x, this.y, 20, 50);
-    context.fillStyle = "rgb(0,0,0,50)";
-    for (let i = -Math.PI; i < Math.PI; i += 0.01) {
-      context.fillRect(
-        this.x + 10 + this.range * Math.cos(i),
-        this.y + this.range * Math.sin(i),
-        1,
-        1
-      );
+    {
+      if (this.recievedEvent == 1) {
+        console.log("just recieved select event for " + this.myId);
+        this.isSelected = 1;
+        this.recievedEvent = 0;
+      }
+      // for (let i = 0; i < circlesCoords.get(this.range).length; i++) {
+      //   context.fillRect(
+      //     circlesCoords.get(this.range)[i].xCoords + this.x,
+      //     circlesCoords.get(this.range)[i].yCoords + this.y,
+      //     5,
+      //     5
+      //   );
+      // }
+      if (this.isSelected == 1) {
+        context.globalAlpha = 1;
+        context.globalAlpha = 0.4;
+        context.drawImage(
+          circleImg,
+          this.x - this.range + 10,
+          this.y - this.range + 15,
+          this.range * 2,
+          this.range * 2
+        );
+      }
+
+      context.globalAlpha = 1;
+      if (this.isSelected == 1) {
+        context.fillStyle = "red";
+      } else {
+        context.fillStyle = "blue";
+      }
+      context.fillRect(this.x, this.y, 20, 40);
+      context.fillStyle = "rgb(0,0,0,50)";
     }
   }
-  aimAt() {
-    this.hasntShotIn -= 1;
+  aim() {
+    this.hasntShotIn++;
+    if (this.hasntShotIn > this.shootingSpeed + 1) {
+      this.hasntShotIn = 0;
+    }
+    let closestDistance = [9999, 9999];
+    let distanceToMe = 0;
     for (let i = 0; i < enemies.length; i++) {
-      if (this.hasntShotIn < 0) {
-        this.hasntShotIn = this.shootingSpeed;
+      distanceToMe = Math.sqrt(
+        Math.pow(this.x - enemies[i].x, 2) + Math.pow(this.y - enemies[i].y, 2)
+      );
+      if (distanceToMe < closestDistance[0]) {
+        closestDistance[0] = distanceToMe;
+        closestDistance[1] = i;
       }
-      if (
-        Math.sqrt(
-          Math.pow(this.x - enemies[i].x, 2) +
-            Math.pow(this.y - enemies[i].y, 2)
-        ) < this.range
-      ) {
-        if (this.hasntShotIn == 0) {
-          console.log("blop");
-          enemies[i].killSelf();
-        }
-        if (enemies[i].isAimedAt.indexOf(this.myId) == -1) {
-          enemies[i].isAimedAt.push(this.myId);
-        }
-      } else {
-        if (enemies[i].isAimedAt.indexOf(this.myId) != -1) {
-          enemies[i].isAimedAt.splice(
-            enemies[i].isAimedAt.indexOf(this.myId),
-            1
-          );
+      if (distanceToMe < this.range) {
+        enemies[i].didSomeoneTellMeToDrawMyselfRed = 1;
+
+        // if (this.hasntShotIn % 30 == 0) {
+        //   enemies[i].killSelf();
+        //   this.hasntShotIn = 0;
+        //   break;
+        // }
+        if (enemies[i] != undefined) {
+          if (!this.enemiesInRange.includes(enemies[i].trueId)) {
+            this.enemiesInRange.push(enemies[i].trueId);
+          } else {
+            this.enemiesInRange.splice(
+              this.enemiesInRange.indexOf(enemies[i].trueId),
+              1
+            );
+          }
         }
       }
+    }
+    if (this.hasntShotIn == this.shootingSpeed) {
+      enemies[closestDistance[1]].killSelf();
     }
   }
 }
+
 towers = [];
 
 enemies = [];
@@ -89,7 +150,8 @@ class enemy {
   currentlyFollowing = 0;
   myId = 0;
   health = 100;
-  isAimedAt = [];
+  trueId = 0;
+  didSomeoneTellMeToDrawMyselfRed = 0;
   constructor(x, y, id) {
     this.x = x;
     this.y = y;
@@ -123,11 +185,13 @@ class enemy {
     }
   }
   drawSelf() {
-    if (this.isAimedAt.length == 0) {
-      context.fillStyle = "black";
-    } else {
+    if (this.didSomeoneTellMeToDrawMyselfRed == 1) {
       context.fillStyle = "red";
+      this.didSomeoneTellMeToDrawMyselfRed = 0;
+    } else {
+      context.fillStyle = "black";
     }
+
     context.fillRect(this.x, this.y, 30, 30);
     if (this.health < 100) {
       context.fillStyle = "rgb(5, 5, 5)";
@@ -138,30 +202,40 @@ class enemy {
     }
   }
   killSelf() {
-    enemies.splice(this.myId - 1, 1);
+    enemies.splice(enemies.indexOf(this), 1);
   }
 }
-
-setInterval(() => {
-  enemies.push(new enemy(260, 0));
-}, 500);
 
 enemies.push(new enemy(260, 0));
 
 //wave 1 4000
 //wave 2 2000
+// for (i = 0; i < 600; i += 10) {
+//   for (j = 0; j < 600; j += 10) {
+//     if (grid[Math.floor(i / 60)][Math.floor(j / 60)] == 1) {
+//       towers.push(new tower(i - 10, j - 50, "lmao", towers.length));
+//     }
+//   }
+// }
 function update() {
+  updates++;
+  if (updates % 20 == 0) {
+    totalNumOfEnemies++;
+
+    enemies.push(new enemy(260, 0, enemies.length));
+    enemies[enemies.length - 1].trueId = totalNumOfEnemies;
+  }
+
   for (i = 0; i < enemies.length; i++) {
     if (enemies.length > 0) {
       enemies[i].followNext();
     }
   }
-  for (i = 0; i < towers.length; i++) {
-    towers[i].aimAt();
-  }
+  // for (i = 0; i < towers.length; i++) {
+  //   towers[i].aimAt();
+  // }
   // Napisanoto tuk se izpulnqva otnovo i otnovo mnogo puti v sekunda
 }
-
 function draw() {
   for (i = 0; i < mapImgs.length; i++) {
     context.drawImage(mapImgs[i], 0, 0, 600, 600);
@@ -173,20 +247,30 @@ function draw() {
   }
   for (i = 0; i < towers.length; i++) {
     towers[i].drawSelf();
+    towers[i].aim();
   }
-  if (mapEditMode) {
+  if (mapEditMode == 1) {
     for (i = 0; i < nodes.length; i++) {
       context.fillRect(nodes[i].x, nodes[i].y, 5, 5);
     }
   }
 
+  if (mapEditMode == 2) {
+    for (i = 0; i < grid.length; i++) {
+      for (j = 0; j < grid[i].length; j++) {
+        context.strokeRect(j * 60, i * 60, 60, 60);
+      }
+    }
+  }
+
   // tuk naprogramirai kakvo da se risuva
 }
+output = "";
 
 function keyup(key) {
   // Show the pressed keycode in the console
   console.log("Pressed", key);
-  if (mapEditMode) {
+  if (mapEditMode == 1) {
     if (key == 32) {
       nodes.push(new node(mouseX, mouseY));
       output = "[";
@@ -197,12 +281,44 @@ function keyup(key) {
       console.log(output);
     }
   }
-  if (key == 32) {
-    towers.push(new tower(mouseX, mouseY, "ddz", towers.length));
+  if (mapEditMode == 2) {
+    if (key == 32) {
+      output +=
+        "grid[" +
+        Math.floor(mouseX / 60) +
+        "][" +
+        Math.floor(mouseY / 60) +
+        "]=0 \n";
+    }
+    console.log(output);
+  }
+  if (key == 32 && mapEditMode == 0) {
+    if (grid[Math.floor(mouseX / 60)][Math.floor(mouseY / 60)] == 1) {
+      towers.push(new tower(mouseX - 10, mouseY - 30, "ddz", towers.length));
+    }
   }
 }
 
 function mouseup() {
+  numOfCollisions = 0;
+  towerToBeSelected = 0;
+  if (towers.length > 0) {
+    for (i = 0; i < towers.length; i++) {
+      if (
+        areColliding(mouseX, mouseY, 1, 1, towers[i].x, towers[i].y, 20, 50)
+      ) {
+        numOfCollisions++;
+        towerToBeSelected = i;
+      }
+    }
+    if (numOfCollisions > 0) {
+      for (i = 0; i < towers.length; i++) {
+        towers[i].isSelected = 0;
+      }
+      towers[towerToBeSelected].isSelected = 1;
+    }
+  }
+
   // Show coordinates of mouse on click
   console.log("Mouse clicked at", mouseX, mouseY);
 }

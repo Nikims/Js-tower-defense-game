@@ -5,6 +5,9 @@
 <head>
 	<style>
 		body, canvas {
+			position:absolute;
+    		left:0px;
+   			 top:0px;
 			margin: 0;
 			padding: 0;
 			overflow: hidden;
@@ -84,9 +87,13 @@
 
 		let endlessCanvas = false;
 		let updateTime = 10; // in ms
-
+		let canvases=[]
 		const canvas = document.getElementById("canvas-id");
+		// const canvas2 = document.getElementById("canvas2-id");
+
 		const context = canvas.getContext("2d");
+		// const context2 = canvas2.getContext("2d");
+
 		context.fillStyle = "#0000ff";
 		// global variables with mouse coordinates
 		let mouseX = 0;
@@ -108,6 +115,7 @@
 		};
 		function redraw() {
 			context.clearRect(0, 0, canvas.width, canvas.height);
+			
 			draw(); // call progammer's draw() function
 			context.globalAlpha = 1;
 			// draw grid
@@ -133,6 +141,7 @@
 		};
 
 		function init() {
+
 			if (endlessCanvas) {
 				canvas.width = window.innerWidth;
 				canvas.height = window.innerHeight;
@@ -212,6 +221,8 @@
 		</script>
 
 		<!-- user's game file -->
+		<script src="./grimd.js"></script>
+
 		<script src="./game.js"></script>
 </body>
 
