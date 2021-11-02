@@ -130,8 +130,8 @@ class bullet {
     this.IremberTarget.y -= (this.y - this.IremberTarget.y) * 4;
   }
   flyTo() {
-    let xDistToNextNode = this.x - this.IremberTarget.x;
-    let yDistToNextNode = this.y - this.IremberTarget.y;
+    let xDistToNextNode = this.x - this.target.x;
+    let yDistToNextNode = this.y - this.target.y;
     let dist = Math.sqrt(
       Math.pow(xDistToNextNode, 2) + Math.pow(yDistToNextNode, 2)
     );
@@ -237,18 +237,29 @@ class tower {
             this.x - enemies[this.closestDistance[1]].x + 15
           ) -
           Math.PI / 2;
-        if (this.currentRotation < nextRotaion) {
-          this.currentRotation += 0.1;
-        } else {
-          this.currentRotation -= 0.1;
+        if (
+          !areColliding(
+            this.currentRotation,
+            1,
+            0.1,
+            0.1,
+            nextRotaion,
+            1,
+            0.1,
+            0,
+            1
+          )
+        ) {
+          if (this.currentRotation < nextRotaion) {
+            this.currentRotation += 0.1;
+          } else {
+            this.currentRotation -= 0.1;
+          }
         }
       } catch (e) {
         console.log("cope");
       }
-      if (
-        this.closestDistance[1] != undefined &&
-        this.closestDistance[0] < this.range
-      ) {
+      if (this.closestDistance[1] != undefined) {
         // console.log(enemies[towers[0].closestDistance[1]].x);
         try {
           context.rotate(this.currentRotation);
