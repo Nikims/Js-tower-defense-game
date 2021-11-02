@@ -6,6 +6,8 @@ mapImgs[0] = new Image();
 mapImgs[0].src = "map1fixed.png";
 circleImg = new Image();
 circleImg.src = "tqkrug.png";
+robotPic = new Image();
+robotPic.src = "robot1.png";
 currentWave = 1;
 totalNumOfEnemies = 0;
 circlesCoords = new Map();
@@ -212,6 +214,7 @@ class enemy {
   speed = 1;
   trueId = 0;
   didSomeoneTellMeToDrawMyselfRed = 0;
+  rotation = 180;
   constructor(x, y, id) {
     this.x = x;
     this.y = y;
@@ -239,6 +242,20 @@ class enemy {
     ) {
       if (this.currentlyFollowing < nodes.length - 1) {
         this.currentlyFollowing++;
+        if (
+          this.currentlyFollowing == 1 ||
+          this.currentlyFollowing == 5 ||
+          this.currentlyFollowing == 6
+        ) {
+          this.rotation -= 90;
+        }
+        if (
+          this.currentlyFollowing == 2 ||
+          this.currentlyFollowing == 3 ||
+          this.currentlyFollowing == 4
+        ) {
+          this.rotation += 90;
+        }
       } else {
         this.killSelf();
       }
@@ -249,14 +266,25 @@ class enemy {
       this.money += 20;
       this.killSelf();
     }
+
+    //context.filter = "none";
+
+    context.save();
+    context.translate(this.x, this.y);
+    context.rotate(this.rotation * (Math.PI / 180));
+    context.drawImage(robotPic, -15, -15, 30, 30);
+    context.restore();
     if (this.didSomeoneTellMeToDrawMyselfRed == 1) {
       context.fillStyle = "red";
+      context.globalAlpha = 0.2;
+      context.fillRect(this.x - 15, this.y - 15, 30, 30);
+      context.globalAlpha = 1;
+
       this.didSomeoneTellMeToDrawMyselfRed = 0;
     } else {
       context.fillStyle = "black";
     }
 
-    context.fillRect(this.x, this.y, 30, 30);
     if (this.health < 100) {
       context.fillStyle = "rgb(5, 5, 5)";
       context.fillRect(this.x - 2.5, this.y - 22, 55, 15);
