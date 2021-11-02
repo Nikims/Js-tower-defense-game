@@ -9,7 +9,7 @@ circleImg.src = "tqkrug.png";
 currentWave = 1;
 totalNumOfEnemies = 0;
 circlesCoords = new Map();
-
+money = 300;
 // function drawCircle(radius) {
 //   if (circlesCoords.get(radius) != undefined) {
 //   } else {
@@ -28,6 +28,59 @@ class node {
   constructor(x, y) {
     this.x = x;
     this.y = y;
+  }
+}
+class bullet {
+  dmg = 0;
+  x = 0;
+  y = 0;
+  source = 0;
+  target = 0;
+  IremberTarget = {};
+  constructor(source, target, dmg) {
+    this.x = source.x;
+    this.y = source.y;
+    this.source = source;
+    this.dmg = dmg;
+    this.target = target;
+    this.IremberTarget.x = target.x;
+    this.IremberTarget.y = target.y;
+    this.IremberTarget.x -= (this.x - this.IremberTarget.x) * 4;
+    this.IremberTarget.y -= (this.y - this.IremberTarget.y) * 4;
+  }
+  flyTo() {
+    let xDistToNextNode = this.x - this.IremberTarget.x;
+    let yDistToNextNode = this.y - this.IremberTarget.y;
+    let dist = Math.sqrt(
+      Math.pow(xDistToNextNode, 2) + Math.pow(yDistToNextNode, 2)
+    );
+    this.x -= 13 * Math.sin(xDistToNextNode / dist);
+    this.y -= 13 * Math.sin(yDistToNextNode / dist);
+    if (
+      areColliding(this.x, this.y, 5, 5, this.target.x, this.target.y, 30, 30)
+    ) {
+      this.target.health -= 20;
+      bullets.splice(bullets.indexOf(this), 1);
+    }
+    if (
+      areColliding(
+        this.x,
+        this.y,
+        5,
+        5,
+        this.IremberTarget.x,
+        this.IremberTarget.y,
+        30,
+        30
+      )
+    ) {
+      bullets.splice(bullets.indexOf(this), 1);
+    }
+
+    // this.y += 5 * Math.sin(this.y / dist);
+  }
+  drawSelf() {
+    context.fillRect(this.x, this.y, 10, 10);
   }
 }
 nodes = [
@@ -116,7 +169,9 @@ class tower {
         closestDistance[1] = i;
       }
       if (distanceToMe < this.range) {
-        enemies[i].didSomeoneTellMeToDrawMyselfRed = 1;
+        if (this.isSelected == 1) {
+          enemies[i].didSomeoneTellMeToDrawMyselfRed = 1;
+        }
 
         // if (this.hasntShotIn % 30 == 0) {
         //   enemies[i].killSelf();
@@ -135,12 +190,16 @@ class tower {
         }
       }
     }
-    if (this.hasntShotIn == this.shootingSpeed) {
-      enemies[closestDistance[1]].health -= 20;
+    if (
+      this.hasntShotIn == this.shootingSpeed &&
+      closestDistance[0] < this.range
+    ) {
+      bullets.push(new bullet(this, enemies[closestDistance[1]], 20));
+      //     enemies[closestDistance[1]].health -= 20;
     }
   }
 }
-
+bullets = [];
 towers = [];
 
 enemies = [];
@@ -150,6 +209,7 @@ class enemy {
   currentlyFollowing = 0;
   myId = 0;
   health = 100;
+  speed = 1;
   trueId = 0;
   didSomeoneTellMeToDrawMyselfRed = 0;
   constructor(x, y, id) {
@@ -163,8 +223,8 @@ class enemy {
     let dist = Math.sqrt(
       Math.pow(xDistToNextNode, 2) + Math.pow(yDistToNextNode, 2)
     );
-    this.x -= 2 * Math.sin(xDistToNextNode / dist);
-    this.y -= 2 * Math.sin(yDistToNextNode / dist);
+    this.x -= this.speed * Math.sin(xDistToNextNode / dist);
+    this.y -= this.speed * Math.sin(yDistToNextNode / dist);
     if (
       areColliding(
         this.x,
@@ -186,6 +246,7 @@ class enemy {
   }
   drawSelf() {
     if (this.health < 0) {
+      this.money += 20;
       this.killSelf();
     }
     if (this.didSomeoneTellMeToDrawMyselfRed == 1) {
@@ -222,7 +283,10 @@ enemies.push(new enemy(260, 0));
 // }
 function update() {
   updates++;
-  if (updates % 60 == 0) {
+  for (i = 0; i < bullets.length; i++) {
+    bullets[i].flyTo();
+  }
+  if (updates % 100 == 0) {
     totalNumOfEnemies++;
 
     enemies.push(new enemy(260, 0, enemies.length));
@@ -265,7 +329,9 @@ function draw() {
       }
     }
   }
-
+  for (i = 0; i < bullets.length; i++) {
+    bullets[i].drawSelf();
+  }
   // tuk naprogramirai kakvo da se risuva
 }
 output = "";
