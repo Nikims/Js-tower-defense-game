@@ -37,10 +37,10 @@ nodes = [
   new node(328, 447),
   new node(325, 266),
   new node(27, 270),
-  new node(26, 597),
+  new node(26, 800),
 ];
 class tower {
-  shootingSpeed = 60;
+  shootingSpeed = 20;
   hasntShotIn = 0;
   type = "";
   x = 0;
@@ -136,7 +136,7 @@ class tower {
       }
     }
     if (this.hasntShotIn == this.shootingSpeed) {
-      enemies[closestDistance[1]].killSelf();
+      enemies[closestDistance[1]].health -= 20;
     }
   }
 }
@@ -185,6 +185,9 @@ class enemy {
     }
   }
   drawSelf() {
+    if (this.health < 0) {
+      this.killSelf();
+    }
     if (this.didSomeoneTellMeToDrawMyselfRed == 1) {
       context.fillStyle = "red";
       this.didSomeoneTellMeToDrawMyselfRed = 0;
@@ -219,7 +222,7 @@ enemies.push(new enemy(260, 0));
 // }
 function update() {
   updates++;
-  if (updates % 20 == 0) {
+  if (updates % 60 == 0) {
     totalNumOfEnemies++;
 
     enemies.push(new enemy(260, 0, enemies.length));
