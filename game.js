@@ -64,6 +64,7 @@ class bullet {
     if (
       areColliding(this.x, this.y, 10, 10, this.target.x, this.target.y, 30, 30)
     ) {
+      money += 20;
       this.target.health -= 20;
       bullets.splice(bullets.indexOf(this), 1);
     }
@@ -165,7 +166,9 @@ class tower {
         } else {
           this.currentRotation -= 0.1;
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log("cope");
+      }
       if (
         this.closestDistance[1] != undefined &&
         this.closestDistance[0] < this.range
@@ -173,7 +176,9 @@ class tower {
         // console.log(enemies[towers[0].closestDistance[1]].x);
         try {
           context.rotate(this.currentRotation);
-        } catch (e) {}
+        } catch (e) {
+          console.log("cope");
+        }
       }
 
       context.drawImage(towerPic, -32, -32, 64, 64);
@@ -386,7 +391,10 @@ function draw() {
   for (i = 0; i < bullets.length; i++) {
     bullets[i].drawSelf();
   }
+  context.font = "20px Ariel";
+  context.fillText(money, 20, 20);
   context.fillRect(700, 300, 100, 100);
+
   // tuk naprogramirai kakvo da se risuva
 }
 output = "";
@@ -417,8 +425,11 @@ function keyup(key) {
     console.log(output);
   }
   if (key == 32 && mapEditMode == 0) {
-    if (grid[Math.floor(mouseX / 60)][Math.floor(mouseY / 60)] == 1) {
-      towers.push(new tower(mouseX - 10, mouseY - 30, "ddz", towers.length));
+    if (money > 200) {
+      if (grid[Math.floor(mouseX / 60)][Math.floor(mouseY / 60)] == 1) {
+        towers.push(new tower(mouseX - 10, mouseY - 30, "ddz", towers.length));
+      }
+      money -= 200;
     }
   }
 }
