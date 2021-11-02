@@ -5,7 +5,6 @@ mapImgs = [];
 mapImgs[0] = new Image();
 mapImgs[0].src = "map1fixed.png";
 currentWave = 1;
-totalNumOfEnemies = 0;
 class node {
   x = 0;
   y = 0;
@@ -29,9 +28,9 @@ class tower {
   type = "";
   x = 0;
   y = 0;
+  currentTarget = 0;
   range = 100;
   myId = 0;
-  targets;
   constructor(x, y, type, id) {
     this.type = type;
     this.x = x;
@@ -42,12 +41,12 @@ class tower {
     context.fillStyle = "red";
     context.fillRect(this.x, this.y, 20, 50);
     context.fillStyle = "rgb(0,0,0,50)";
-    for (let i = -Math.PI; i < Math.PI; i += 0.02) {
+    for (let i = -Math.PI; i < Math.PI; i += 0.01) {
       context.fillRect(
         this.x + 10 + this.range * Math.cos(i),
         this.y + this.range * Math.sin(i),
-        5,
-        5
+        1,
+        1
       );
     }
   }
@@ -63,6 +62,10 @@ class tower {
             Math.pow(this.y - enemies[i].y, 2)
         ) < this.range
       ) {
+        if (this.hasntShotIn == 0) {
+          console.log("blop");
+          enemies[i].killSelf();
+        }
         if (enemies[i].isAimedAt.indexOf(this.myId) == -1) {
           enemies[i].isAimedAt.push(this.myId);
         }
@@ -87,7 +90,6 @@ class enemy {
   myId = 0;
   health = 100;
   isAimedAt = [];
-  trueId = 0;
   constructor(x, y, id) {
     this.x = x;
     this.y = y;
@@ -136,15 +138,12 @@ class enemy {
     }
   }
   killSelf() {
-    enemies.splice(enemies.indexOf(this), 1);
+    enemies.splice(this.myId - 1, 1);
   }
 }
 
 setInterval(() => {
-  totalNumOfEnemies++;
-
-  enemies.push(new enemy(260, 0, enemies.length));
-  enemies[enemies.length - 1].trueId = totalNumOfEnemies;
+  enemies.push(new enemy(260, 0));
 }, 500);
 
 enemies.push(new enemy(260, 0));
