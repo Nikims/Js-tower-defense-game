@@ -13,6 +13,7 @@ towerPic.src = "tower1big.png";
 currentWave = 1;
 totalNumOfEnemies = 0;
 circlesCoords = new Map();
+selectedTower = -1;
 money = 300;
 // function drawCircle(radius) {
 //   if (circlesCoords.get(radius) != undefined) {
@@ -61,7 +62,7 @@ class bullet {
     this.x -= 13 * Math.sin(xDistToNextNode / dist);
     this.y -= 13 * Math.sin(yDistToNextNode / dist);
     if (
-      areColliding(this.x, this.y, 5, 5, this.target.x, this.target.y, 30, 30)
+      areColliding(this.x, this.y, 10, 10, this.target.x, this.target.y, 30, 30)
     ) {
       this.target.health -= 20;
       bullets.splice(bullets.indexOf(this), 1);
@@ -108,6 +109,7 @@ class tower {
   recievedEvent = 0;
   enemiesInRange = [];
   closestDistance = [];
+  currentRotation = 0;
 
   constructor(x, y, type, id) {
     this.type = type;
@@ -123,11 +125,6 @@ class tower {
   }
   drawSelf() {
     {
-      if (this.recievedEvent == 1) {
-        console.log("just recieved select event for " + this.myId);
-        this.isSelected = 1;
-        this.recievedEvent = 0;
-      }
       // for (let i = 0; i < circlesCoords.get(this.range).length; i++) {
       //   context.fillRect(
       //     circlesCoords.get(this.range)[i].xCoords + this.x,
@@ -156,15 +153,27 @@ class tower {
       }
       context.save();
       context.translate(this.x + 15, this.y + 15);
-      if (this.closestDistance[1] != undefined) {
-        // console.log(enemies[towers[0].closestDistance[1]].x);
-        context.rotate(
+      try {
+        let nextRotaion =
           Math.atan2(
-            this.y - enemies[this.closestDistance[1]].y,
-            this.x - enemies[this.closestDistance[1]].x
+            this.y - enemies[this.closestDistance[1]].y + 15,
+            this.x - enemies[this.closestDistance[1]].x + 15
           ) -
-            Math.PI / 2
-        );
+          Math.PI / 2;
+        if (this.currentRotation < nextRotaion) {
+          this.currentRotation += 0.1;
+        } else {
+          this.currentRotation -= 0.1;
+        }
+      } catch (e) {}
+      if (
+        this.closestDistance[1] != undefined &&
+        this.closestDistance[0] < this.range
+      ) {
+        // console.log(enemies[towers[0].closestDistance[1]].x);
+        try {
+          context.rotate(this.currentRotation);
+        } catch (e) {}
       }
 
       context.drawImage(towerPic, -32, -32, 64, 64);
@@ -377,6 +386,7 @@ function draw() {
   for (i = 0; i < bullets.length; i++) {
     bullets[i].drawSelf();
   }
+  context.fillRect(700, 300, 100, 100);
   // tuk naprogramirai kakvo da se risuva
 }
 output = "";
@@ -416,6 +426,13 @@ function keyup(key) {
 function mouseup() {
   numOfCollisions = 0;
   towerToBeSelected = 0;
+  if (selectedTower != -1) {
+    if (areColliding(mouseX, mouseY, 30, 30, 700, 300, 300, 300)) {
+      towers[selectedTower].shootingSpeed = Math.floor(
+        towers[selectedTower].shootingSpeed / 1.5
+      );
+    }
+  }
   if (towers.length > 0) {
     for (i = 0; i < towers.length; i++) {
       if (
@@ -430,6 +447,7 @@ function mouseup() {
         towers[i].isSelected = 0;
       }
       towers[towerToBeSelected].isSelected = 1;
+      selectedTower = towerToBeSelected;
     }
   }
 
