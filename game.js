@@ -74,12 +74,11 @@ class towerSpawner {
     context.fillStyle = "black";
   }
   mouseUpUpdate() {
-    this.currentlyDragging = false;
     this.x = this.ogX;
     this.y = this.ogY;
 
     let numOfCollisions = 0;
-    if (money > 200) {
+    if (money > 200 && this.currentlyDragging == true) {
       if (grid[Math.floor(mouseX / 60)][Math.floor(mouseY / 60)] == 1) {
         for (i = 0; i < towers.length; i++) {
           if (
@@ -100,6 +99,7 @@ class towerSpawner {
         }
       }
     }
+    this.currentlyDragging = false;
   }
 }
 testSpawner = new towerSpawner(700, 100);
