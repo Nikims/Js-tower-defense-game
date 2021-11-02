@@ -14,6 +14,13 @@ currentWave = 1;
 totalNumOfEnemies = 0;
 circlesCoords = new Map();
 selectedTower = -1;
+waves = [];
+waves.push({ time: 100, number: 5 });
+waves.push({ time: 40, number: 10 });
+waves.push({ time: 20, number: 20 });
+waves.push({ time: 10, number: 20 });
+
+currentWave = 0;
 money = 300;
 // function drawCircle(radius) {
 //   if (circlesCoords.get(radius) != undefined) {
@@ -59,8 +66,8 @@ class bullet {
     let dist = Math.sqrt(
       Math.pow(xDistToNextNode, 2) + Math.pow(yDistToNextNode, 2)
     );
-    this.x -= 13 * Math.sin(xDistToNextNode / dist);
-    this.y -= 13 * Math.sin(yDistToNextNode / dist);
+    this.x -= 9 * Math.sin(xDistToNextNode / dist);
+    this.y -= 9 * Math.sin(yDistToNextNode / dist);
     if (
       areColliding(this.x, this.y, 10, 10, this.target.x, this.target.y, 30, 30)
     ) {
@@ -345,7 +352,14 @@ function update() {
   for (i = 0; i < bullets.length; i++) {
     bullets[i].flyTo();
   }
-  if (updates % 100 == 0) {
+  if (updates % waves[currentWave].time == 0) {
+    if (waves[currentWave].number > 0) {
+      waves[currentWave].number--;
+    } else {
+      if (currentWave != waves.length - 1) {
+        currentWave++;
+      }
+    }
     totalNumOfEnemies++;
 
     enemies.push(new enemy(260, 0, enemies.length));
