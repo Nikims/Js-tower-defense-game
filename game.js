@@ -38,6 +38,71 @@ money = 300;
 //     }
 //   }
 // }
+class towerSpawner {
+  x = 0;
+  y = 0;
+  ogX = 0;
+  ogY = 0;
+  type = 0;
+  currentlyDragging = false;
+  constructor(x, y, type) {
+    this.x = x;
+    this.y = y;
+    this.ogX = x;
+    this.ogY = y;
+    this.type = type;
+  }
+  updatePos() {
+    if (this.currentlyDragging) {
+      this.x = mouseX;
+      this.y = mouseY;
+    }
+  }
+  mouseDownUpdate() {
+    if (areColliding(this.x, this.y, 100, 100, mouseX, mouseY, 100, 100)) {
+      this.currentlyDragging = true;
+    }
+  }
+  drawSelf() {
+    context.drawImage(towerPic, this.x, this.y, 60, 60);
+    if (money < 200) {
+      context.fillStyle = "red";
+      context.globalAlpha = 0.4;
+      context.fillRect(this.x + 10, this.y, 37, 60);
+      context.globalAlpha = 1;
+    }
+    context.fillStyle = "black";
+  }
+  mouseUpUpdate() {
+    this.currentlyDragging = false;
+    this.x = this.ogX;
+    this.y = this.ogY;
+
+    let numOfCollisions = 0;
+    if (money > 200) {
+      if (grid[Math.floor(mouseX / 60)][Math.floor(mouseY / 60)] == 1) {
+        for (i = 0; i < towers.length; i++) {
+          if (
+            Math.sqrt(
+              Math.pow(mouseX - 10 - towers[i].x, 2) +
+                Math.pow(mouseY - 30 - towers[i].y, 2)
+            ) <
+            towers[i].range / 3
+          ) {
+            numOfCollisions++;
+          }
+        }
+        if (numOfCollisions == 0) {
+          towers.push(
+            new tower(mouseX - 10, mouseY - 30, "ddz", towers.length)
+          );
+          money -= 200;
+        }
+      }
+    }
+  }
+}
+testSpawner = new towerSpawner(700, 100);
 class node {
   x = 0;
   y = 0;
@@ -352,6 +417,7 @@ enemies.push(new enemy(260, 0));
 //   }
 // }
 function update() {
+  testSpawner.updatePos();
   updates++;
   for (i = 0; i < bullets.length; i++) {
     bullets[i].flyTo();
@@ -409,6 +475,8 @@ function draw() {
   for (i = 0; i < bullets.length; i++) {
     bullets[i].drawSelf();
   }
+  // context.drawImage(towerPic, tempTower.x, tempTower.y, 60, 60);
+  testSpawner.drawSelf();
   context.font = "20px Ariel";
   context.fillText(money, 20, 20);
   context.fillRect(700, 300, 100, 100);
@@ -442,32 +510,12 @@ function keyup(key) {
     }
     console.log(output);
   }
-  if (key == 32 && mapEditMode == 0) {
-    numOfCollisions = 0;
-    if (money > 200) {
-      if (grid[Math.floor(mouseX / 60)][Math.floor(mouseY / 60)] == 1) {
-        for (i = 0; i < towers.length; i++) {
-          if (
-            Math.sqrt(
-              Math.pow(mouseX - 10 - towers[i].x, 2) +
-                Math.pow(mouseY - 30 - towers[i].y, 2)
-            ) < towers[i].range
-          ) {
-            numOfCollisions++;
-          }
-        }
-        if (numOfCollisions == 0) {
-          towers.push(
-            new tower(mouseX - 10, mouseY - 30, "ddz", towers.length)
-          );
-          money -= 200;
-        }
-      }
-    }
-  }
 }
-
+function mousedown() {
+  testSpawner.mouseDownUpdate();
+}
 function mouseup() {
+  testSpawner.mouseUpUpdate();
   numOfCollisions = 0;
   towerToBeSelected = 0;
   if (selectedTower != -1) {
