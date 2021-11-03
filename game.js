@@ -22,13 +22,13 @@ deltaMouseX = 0;
 deltaMouseY = 0;
 
 waves.push({ time: 100, number: 20, health: 100 });
-waves.push({ time: 1000, number: 0 });
+waves.push({ time: 1000, number: 0, health: 100 });
 waves.push({ time: 40, number: 40, health: 200 });
-waves.push({ time: 1000, number: 0 });
+waves.push({ time: 1000, number: 0, health: 100 });
 waves.push({ time: 30, number: 70, health: 300 });
-waves.push({ time: 1000, number: 0 });
+waves.push({ time: 1000, number: 0, health: 100 });
 waves.push({ time: 20, number: 100, health: 400 });
-waves.push({ time: Infinity, number: 10 });
+waves.push({ time: Infinity, number: 10, health: 100 });
 function foriin(arr, action) {
   for (i = 0; i < arr.length; i++) {
     action();
@@ -382,7 +382,7 @@ class enemy {
   trueId = 0;
   didSomeoneTellMeToDrawMyselfRed = 0;
   rotation = 180;
-  maxHealth = 0;
+  maxHealth = 100;
   constructor(x, y, id, health) {
     this.x = x;
     this.y = y;
@@ -473,8 +473,6 @@ class enemy {
     enemies.splice(enemies.indexOf(this), 1);
   }
 }
-
-enemies.push(new enemy(260, 0));
 
 //wave 1 4000
 //wave 2 2000
