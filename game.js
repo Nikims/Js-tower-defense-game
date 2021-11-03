@@ -28,7 +28,7 @@ waves.push({ time: 1000, number: 0, health: 100 });
 waves.push({ time: 30, number: 70, health: 300 });
 waves.push({ time: 1000, number: 0, health: 100 });
 waves.push({ time: 20, number: 100, health: 400 });
-waves.push({ time: Infinity, number: 10, health: 100 });
+waves.push({ time: 4, number: Infinity, health: 500 });
 function foriin(arr, action) {
   for (i = 0; i < arr.length; i++) {
     action();
@@ -180,7 +180,7 @@ class bullet {
     if (
       areColliding(this.x, this.y, 10, 10, this.target.x, this.target.y, 30, 30)
     ) {
-      if (this.dmg < this.target.health) {
+      if (this.target.health - this.dmg > 0) {
         money += this.dmg * 2;
       } else {
         money += health * 2;
