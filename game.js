@@ -17,14 +17,17 @@ selectedTower = -1;
 health = 200;
 waves = [];
 currentLevel = 0;
+isGameOver = false;
+deltaMouseX = 0;
+deltaMouseY = 0;
 
-waves.push({ time: 100, number: 20 });
+waves.push({ time: 100, number: 20, health: 100 });
 waves.push({ time: 1000, number: 0 });
-waves.push({ time: 40, number: 40 });
+waves.push({ time: 40, number: 40, health: 200 });
 waves.push({ time: 1000, number: 0 });
-waves.push({ time: 30, number: 70 });
+waves.push({ time: 30, number: 70, health: 300 });
 waves.push({ time: 1000, number: 0 });
-waves.push({ time: 20, number: 100 });
+waves.push({ time: 20, number: 100, health: 400 });
 waves.push({ time: Infinity, number: 10 });
 function foriin(arr, action) {
   for (i = 0; i < arr.length; i++) {
@@ -34,15 +37,17 @@ function foriin(arr, action) {
 class upgradeBox {
   x = 0;
   y = 0;
-  constructor(x, y) {
+  type = "";
+  constructor(x, y, type) {
     this.x = x;
     this.y = y;
+    this.type = type;
   }
   drawSelf() {
     context.fillRect(this.x, this.y, 200, 60);
 
     context.fillStyle = "white";
-    context.fillText("Upgrade", this.x + 60, this.y + 30);
+    context.fillText("Upgrade " + this.type, this.x + 40, this.y + 35);
     context.fillStyle = "black";
   }
   checkMouseUpCollision(whatdo) {
@@ -52,9 +57,9 @@ class upgradeBox {
   }
 }
 upgradeboxes = [];
-upgradeboxes.push(new upgradeBox(700, 300));
-upgradeboxes.push(new upgradeBox(700, 400));
-upgradeboxes.push(new upgradeBox(700, 500));
+upgradeboxes.push(new upgradeBox(700, 300, "speed"));
+upgradeboxes.push(new upgradeBox(700, 400, "damage"));
+upgradeboxes.push(new upgradeBox(700, 500, "range"));
 
 currentWave = 0;
 money = 300;
@@ -86,8 +91,13 @@ class towerSpawner {
   }
   updatePos() {
     if (this.currentlyDragging) {
-      this.x = mouseX;
-      this.y = mouseY;
+      console.log(mouseX - this.x);
+      this.x = mouseX - 30;
+      this.y = mouseY - 30;
+
+      //this.y = deltaMouseY +  (deltaMouseY - this.y);
+      deltaMouseX = mouseX;
+      deltaMouseY = mouseY;
     }
   }
   mouseDownUpdate() {
@@ -124,9 +134,7 @@ class towerSpawner {
           }
         });
         if (numOfCollisions == 0) {
-          towers.push(
-            new tower(mouseX - 10, mouseY - 30, "ddz", towers.length)
-          );
+          towers.push(new tower(mouseX - 7, mouseY - 15, "ddz", towers.length));
           money -= 200;
         }
       }
@@ -374,10 +382,13 @@ class enemy {
   trueId = 0;
   didSomeoneTellMeToDrawMyselfRed = 0;
   rotation = 180;
-  constructor(x, y, id) {
+  maxHealth = 0;
+  constructor(x, y, id, health) {
     this.x = x;
     this.y = y;
     this.myId = id;
+    this.maxHealth = health;
+    this.health = this.maxHealth;
   }
   followNext() {
     let xDistToNextNode = this.x - nodes[this.currentlyFollowing].x;
@@ -445,11 +456,16 @@ class enemy {
       context.fillStyle = "black";
     }
 
-    if (this.health < 100) {
+    if (this.health < this.maxHealth) {
       context.fillStyle = "rgb(5, 5, 5)";
       context.fillRect(this.x - 2.5, this.y - 22, 55, 15);
       context.fillStyle = "green";
-      context.fillRect(this.x, this.y - 20, this.health / 2, 10);
+      context.fillRect(
+        this.x,
+        this.y - 20,
+        (this.health / this.maxHealth) * 50,
+        10
+      );
       context.fillStyle = "black";
     }
   }
@@ -470,35 +486,39 @@ enemies.push(new enemy(260, 0));
 //   }
 // }
 function update() {
-  testSpawner.updatePos();
-  updates++;
-  foriin(bullets, () => {
-    bullets[i].flyTo();
-  });
+  if (!isGameOver) {
+    testSpawner.updatePos();
+    updates++;
+    foriin(bullets, () => {
+      bullets[i].flyTo();
+    });
 
-  if (updates % waves[currentWave].time == 0) {
-    if (waves[currentWave].number > 0) {
-      waves[currentWave].number--;
-    } else {
-      if (currentWave != waves.length - 1) {
-        currentWave++;
+    if (updates % waves[currentWave].time == 0) {
+      if (waves[currentWave].number > 0) {
+        waves[currentWave].number--;
+      } else {
+        if (currentWave != waves.length - 1) {
+          currentWave++;
+        }
       }
-    }
-    totalNumOfEnemies++;
+      totalNumOfEnemies++;
 
-    enemies.push(new enemy(260, 0, enemies.length));
-    enemies[enemies.length - 1].trueId = totalNumOfEnemies;
+      enemies.push(
+        new enemy(260, 0, enemies.length, waves[currentWave].health)
+      );
+      enemies[enemies.length - 1].trueId = totalNumOfEnemies;
+    }
+    foriin(enemies, () => {
+      if (enemies.length > 0) {
+        enemies[i].followNext();
+      }
+    });
+
+    // for (i = 0; i < towers.length; i++) {
+    //   towers[i].aimAt();
+    // }
+    // Napisanoto tuk se izpulnqva otnovo i otnovo mnogo puti v sekunda
   }
-  foriin(enemies, () => {
-    if (enemies.length > 0) {
-      enemies[i].followNext();
-    }
-  });
-
-  // for (i = 0; i < towers.length; i++) {
-  //   towers[i].aimAt();
-  // }
-  // Napisanoto tuk se izpulnqva otnovo i otnovo mnogo puti v sekunda
 }
 function draw() {
   context.drawImage(mapImgs[currentLevel], 0, 0, 600, 600);
@@ -539,6 +559,11 @@ function draw() {
   foriin(upgradeboxes, () => {
     upgradeboxes[i].drawSelf();
   });
+  if (isGameOver) {
+    context.fillStyle = "red";
+    context.font = "50px Ariel";
+    context.fillText("Game over!", 170, 250);
+  }
 
   // tuk naprogramirai kakvo da se risuva
 }
@@ -582,20 +607,27 @@ function mouseup() {
     upgradeboxes[i].checkMouseUpCollision(() => {
       if (selectedTower != -1) {
         if (i == 0) {
-          towers[selectedTower].shootingSpeed = Math.floor(
-            towers[selectedTower].shootingSpeed / 1.5
-          );
-          money -= 60;
+          if (money > 60) {
+            towers[selectedTower].shootingSpeed = Math.floor(
+              towers[selectedTower].shootingSpeed / 1.5
+            );
+
+            money -= 60;
+          }
         }
         if (i == 1) {
-          money -= 60;
+          if (money > 60) {
+            money -= 60;
 
-          towers[selectedTower].dmg += 5;
+            towers[selectedTower].dmg += 5;
+          }
         }
         if (i == 2) {
-          money -= 60;
+          if (money > 60) {
+            money -= 60;
 
-          towers[selectedTower].range += 5;
+            towers[selectedTower].range += 5;
+          }
         }
       }
     });
