@@ -43,7 +43,7 @@ class bullet {
             enemies[i].health -= this.dmg;
           } else {
             enemies[i].health = -1;
-            money += health * 2;
+            money += enemies[i].health * 2;
           }
           //console.log("lmao" + this.dmg);
           bullets.splice(bullets.indexOf(this), 1);
@@ -67,7 +67,7 @@ class bullet {
 
       // this.y += 5 * Math.sin(this.y / dist);
     } else {
-      bullets.splice(0);
+      bullets.splice(bullets.indexOf(this), 1);
     }
   }
   drawSelf() {

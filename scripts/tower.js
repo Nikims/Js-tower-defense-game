@@ -10,8 +10,10 @@ class tower {
   recievedEvent = 0;
   enemiesInRange = [];
   closestDistance = [];
+  lowestHp = [];
   currentRotation = 0;
   dmg = 5;
+  selectionMode = "closest";
 
   constructor(x, y, type, id) {
     this.type = type;
@@ -42,7 +44,7 @@ class tower {
     //     5
     //   );
     // }
-    if (this.isSelected == 1) {
+    if (this.isSelected == 1 && this.type != "sniper") {
       context.globalAlpha = 1;
       context.globalAlpha = 0.4;
       context.drawImage(
@@ -65,8 +67,8 @@ class tower {
     try {
       let nextRotaion =
         Math.atan2(
-          this.y - enemies[this.closestDistance[1]].y + 15,
-          this.x - enemies[this.closestDistance[1]].x + 15
+          this.y - this.closestDistance[1].y + 15,
+          this.x - this.closestDistance[1].x + 15
         ) -
         Math.PI / 2;
       if (
@@ -110,62 +112,54 @@ class tower {
       this.hasntShotIn = 0;
     }
     this.closestDistance = [9999, 9999];
-    let distanceToMe = 0;
+    this.lowestHp = [9999, 9999];
+
+    this.enemiesInRange = [];
     for (let i = 0; i < enemies.length; i++) {
-      distanceToMe = Math.sqrt(
+      let distanceToMe = Math.sqrt(
         Math.pow(this.x - enemies[i].x, 2) + Math.pow(this.y - enemies[i].y, 2)
       );
-      if (distanceToMe < this.closestDistance[0]) {
-        this.closestDistance[0] = distanceToMe;
-        this.closestDistance[1] = i;
+      if (distanceToMe < this.range) {
+        this.enemiesInRange.push(enemies[i]);
       }
-      if (distanceToMe < this.range + 15) {
-        if (this.isSelected == 1) {
-          enemies[i].didSomeoneTellMeToDrawMyselfRed = 1;
-        }
+    }
+    for (let i = 0; i < this.enemiesInRange.length; i++) {
+      let distanceToMe = Math.sqrt(
+        Math.pow(this.x - this.enemiesInRange[i].x, 2) +
+          Math.pow(this.y - this.enemiesInRange[i].y, 2)
+      );
+      if (distanceToMe < this.closestDistance[0]) {
+        this.closestDistance = [distanceToMe, this.enemiesInRange[i]];
+      }
+    }
 
-        // if (this.hasntShotIn % 30 == 0) {
-        //   enemies[i].killSelf();
-        //   this.hasntShotIn = 0;
-        //   break;
-        // }
-        if (enemies[i] != undefined) {
-          if (!this.enemiesInRange.includes(enemies[i].trueId)) {
-            this.enemiesInRange.push(enemies[i].trueId);
-          } else {
-            this.enemiesInRange.splice(
-              this.enemiesInRange.indexOf(enemies[i].trueId),
-              1
+    try {
+      if (
+        this.hasntShotIn == this.shootingSpeed &&
+        this.closestDistance[0] < this.range
+      ) {
+        //console.log(this.dmg);
+        if (this.type == "main" || this.type == "sniper") {
+          bullets.push(new bullet(this, this.closestDistance[1], this.dmg));
+        }
+        if (this.type == "spike") {
+          for (let i = 0; i < 360; i += 4) {
+            bullets.push(
+              new bullet(
+                this,
+                {
+                  x: this.x + this.range * Math.cos((i * Math.PI) / 180),
+                  y: this.y + this.range * Math.sin((i * Math.PI) / 180),
+                },
+                this.dmg
+              )
             );
           }
         }
       }
+    } catch (e) {
+      //console.log("cope");
     }
-    if (
-      this.hasntShotIn == this.shootingSpeed &&
-      this.closestDistance[0] < this.range
-    ) {
-      //console.log(this.dmg);
-      if (this.type == "main" || this.type == "sniper") {
-        bullets.push(
-          new bullet(this, enemies[this.closestDistance[1]], this.dmg)
-        );
-      }
-      if (this.type == "spike") {
-        for (let i = 0; i < 360; i += 4) {
-          bullets.push(
-            new bullet(
-              this,
-              {
-                x: this.x + this.range * Math.cos((i * Math.PI) / 180),
-                y: this.y + this.range * Math.sin((i * Math.PI) / 180),
-              },
-              this.dmg
-            )
-          );
-        }
-      }
-      //     enemies[closestDistance[1]].health -= 20;
-    }
+    //     enemies[closestDistance[1]].health -= 20;
   }
 }

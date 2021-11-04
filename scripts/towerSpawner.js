@@ -45,7 +45,7 @@ class towerSpawner {
     let numOfCollisions = 0;
     if (money > 200 && this.currentlyDragging == true) {
       if (grid[Math.floor(mouseX / 60)][Math.floor(mouseY / 60)] == 1) {
-        foriin(towers, () => {
+        for (let i = 0; i < towers.length; i++) {
           if (
             Math.sqrt(
               Math.pow(mouseX - 10 - towers[i].x, 2) +
@@ -55,7 +55,7 @@ class towerSpawner {
           ) {
             numOfCollisions++;
           }
-        });
+        }
         if (numOfCollisions == 0) {
           towers.push(
             new tower(mouseX - 7, mouseY - 15, this.type, towers.length)
