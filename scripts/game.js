@@ -78,6 +78,7 @@ money = 300;
 
 testSpawner = new towerSpawner(700, 100, "main");
 spikeTowerSpawner = new towerSpawner(800, 100, "spike");
+sniperSpawner = new towerSpawner(900, 100, "sniper");
 class node {
   x = 0;
   y = 0;
@@ -102,7 +103,6 @@ towers = [];
 
 enemies = [];
 
-
 //wave 1 4000
 //wave 2 2000
 // for (i = 0; i < 600; i += 10) {
@@ -116,6 +116,8 @@ function update() {
   if (!isGameOver) {
     testSpawner.updatePos();
     spikeTowerSpawner.updatePos();
+    sniperSpawner.updatePos();
+
     updates++;
     foriin(bullets, () => {
       bullets[i].flyTo();
@@ -180,6 +182,7 @@ function draw() {
   // context.drawImage(towerPic, tempTower.x, tempTower.y, 60, 60);
   testSpawner.drawSelf();
   spikeTowerSpawner.drawSelf();
+  sniperSpawner.drawSelf();
 
   context.font = "20px Ariel";
   context.fillText(money, 20, 20);
@@ -233,6 +236,7 @@ function keyup(key) {
 function mousedown() {
   testSpawner.mouseDownUpdate();
   spikeTowerSpawner.mouseDownUpdate();
+  sniperSpawner.mouseDownUpdate();
 }
 function mouseup() {
   foriin(upgradeboxes, () => {
@@ -266,6 +270,8 @@ function mouseup() {
   });
   spikeTowerSpawner.mouseUpUpdate();
   testSpawner.mouseUpUpdate();
+  sniperSpawner.mouseUpUpdate();
+
   numOfCollisions = 0;
   towerToBeSelected = 0;
 

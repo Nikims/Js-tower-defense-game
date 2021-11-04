@@ -18,6 +18,11 @@ class tower {
     this.x = x;
     this.y = y;
     this.myId = id;
+    if (this.type == "sniper") {
+      this.range = 900;
+      this.dmg = 70;
+      this.shootingSpeed = 40;
+    }
     // drawCircle(this.range);
 
     // for (let i = 0; i < towers.length; i++) {
@@ -140,7 +145,7 @@ class tower {
       this.closestDistance[0] < this.range
     ) {
       //console.log(this.dmg);
-      if (this.type == "main") {
+      if (this.type == "main" || this.type == "sniper") {
         bullets.push(
           new bullet(this, enemies[this.closestDistance[1]], this.dmg)
         );
