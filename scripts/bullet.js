@@ -24,28 +24,51 @@ class bullet {
     );
     this.x -= 9 * Math.sin(xDistToNextNode / dist);
     this.y -= 9 * Math.sin(yDistToNextNode / dist);
-    for (let i = 0; i < enemies.length; i++) {
-      if (
-        areColliding(this.x, this.y, 10, 10, enemies[i].x, enemies[i].y, 30, 30)
-      ) {
-        if (enemies[i].health - this.dmg > 0) {
-          money += this.dmg * 2;
-        } else {
-          money += health * 2;
+    if (enemies.length != 0) {
+      for (let i = 0; i < enemies.length; i++) {
+        if (
+          areColliding(
+            this.x,
+            this.y,
+            10,
+            10,
+            enemies[i].x,
+            enemies[i].y,
+            30,
+            30
+          )
+        ) {
+          if (enemies[i].health - this.dmg > 0) {
+            money += this.dmg * 2;
+            enemies[i].health -= this.dmg;
+          } else {
+            enemies[i].health = -1;
+            money += health * 2;
+          }
+          //console.log("lmao" + this.dmg);
+          bullets.splice(bullets.indexOf(this), 1);
         }
-        //console.log("lmao" + this.dmg);
-        enemies[i].health -= this.dmg;
-        bullets.splice(bullets.indexOf(this), 1);
+
+        if (
+          areColliding(
+            this.x,
+            this.y,
+            5,
+            5,
+            this.target.x,
+            this.target.y,
+            30,
+            30
+          )
+        ) {
+          bullets.splice(bullets.indexOf(this), 1);
+        }
       }
 
-      if (
-        areColliding(this.x, this.y, 5, 5, this.target.x, this.target.y, 30, 30)
-      ) {
-        bullets.splice(bullets.indexOf(this), 1);
-      }
+      // this.y += 5 * Math.sin(this.y / dist);
+    } else {
+      bullets.splice(0);
     }
-
-    // this.y += 5 * Math.sin(this.y / dist);
   }
   drawSelf() {
     context.fillRect(this.x, this.y, 10, 10);
