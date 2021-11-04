@@ -101,7 +101,7 @@ class towerSpawner {
     }
   }
   mouseDownUpdate() {
-    if (areColliding(this.x, this.y, 100, 100, mouseX, mouseY, 100, 100)) {
+    if (areColliding(this.x, this.y, 100, 100, mouseX, mouseY, 5, 5)) {
       this.currentlyDragging = true;
     }
   }
@@ -134,7 +134,15 @@ class towerSpawner {
           }
         });
         if (numOfCollisions == 0) {
-          towers.push(new tower(mouseX - 7, mouseY - 15, "ddz", towers.length));
+          towers.push(
+            new tower(
+              mouseX - 7,
+              mouseY - 15,
+              this.type,
+              towers.length,
+              this.type
+            )
+          );
           money -= 200;
         }
       }
@@ -142,7 +150,8 @@ class towerSpawner {
     this.currentlyDragging = false;
   }
 }
-testSpawner = new towerSpawner(700, 100);
+testSpawner = new towerSpawner(700, 100, "main");
+spikeTowerSpawner = new towerSpawner(800, 100, "spike");
 class node {
   x = 0;
   y = 0;
@@ -177,31 +186,25 @@ class bullet {
     );
     this.x -= 9 * Math.sin(xDistToNextNode / dist);
     this.y -= 9 * Math.sin(yDistToNextNode / dist);
-    if (
-      areColliding(this.x, this.y, 10, 10, this.target.x, this.target.y, 30, 30)
-    ) {
-      if (this.target.health - this.dmg > 0) {
-        money += this.dmg * 2;
-      } else {
-        money += health * 2;
+    for (let i = 0; i < enemies.length; i++) {
+      if (
+        areColliding(this.x, this.y, 10, 10, enemies[i].x, enemies[i].y, 30, 30)
+      ) {
+        if (enemies[i].health - this.dmg > 0) {
+          money += this.dmg * 2;
+        } else {
+          money += health * 2;
+        }
+        //console.log("lmao" + this.dmg);
+        enemies[i].health -= this.dmg;
+        bullets.splice(bullets.indexOf(this), 1);
       }
-      //console.log("lmao" + this.dmg);
-      this.target.health -= this.dmg;
-      bullets.splice(bullets.indexOf(this), 1);
-    }
-    if (
-      areColliding(
-        this.x,
-        this.y,
-        5,
-        5,
-        this.IremberTarget.x,
-        this.IremberTarget.y,
-        30,
-        30
-      )
-    ) {
-      bullets.splice(bullets.indexOf(this), 1);
+
+      if (
+        areColliding(this.x, this.y, 5, 5, this.target.x, this.target.y, 30, 30)
+      ) {
+        bullets.splice(bullets.indexOf(this), 1);
+      }
     }
 
     // this.y += 5 * Math.sin(this.y / dist);
@@ -361,9 +364,26 @@ class tower {
       this.closestDistance[0] < this.range
     ) {
       //console.log(this.dmg);
-      bullets.push(
-        new bullet(this, enemies[this.closestDistance[1]], this.dmg)
-      );
+      if (this.type == "main") {
+        bullets.push(
+          new bullet(this, enemies[this.closestDistance[1]], this.dmg)
+        );
+      }
+      if (this.type == "spike") {
+        for (i = 0; i < 360; i += 5) {
+          bullets.push(
+            new bullet(
+              this,
+              {
+                x: this.x + this.range * Math.sin((i * Math.PI) / 180),
+                y: this.y + this.range * Math.cos((i * Math.PI) / 180),
+              },
+              this.dmg
+            )
+          );
+        }
+      }
+
       //     enemies[closestDistance[1]].health -= 20;
     }
   }
@@ -486,6 +506,7 @@ class enemy {
 function update() {
   if (!isGameOver) {
     testSpawner.updatePos();
+    spikeTowerSpawner.updatePos();
     updates++;
     foriin(bullets, () => {
       bullets[i].flyTo();
@@ -549,6 +570,8 @@ function draw() {
   });
   // context.drawImage(towerPic, tempTower.x, tempTower.y, 60, 60);
   testSpawner.drawSelf();
+  spikeTowerSpawner.drawSelf();
+
   context.font = "20px Ariel";
   context.fillText(money, 20, 20);
   context.font = "20px Ariel";
@@ -597,8 +620,10 @@ function keyup(key) {
     console.log(output);
   }
 }
+
 function mousedown() {
   testSpawner.mouseDownUpdate();
+  spikeTowerSpawner.mouseDownUpdate();
 }
 function mouseup() {
   foriin(upgradeboxes, () => {
@@ -630,7 +655,7 @@ function mouseup() {
       }
     });
   });
-
+  spikeTowerSpawner.mouseUpUpdate();
   testSpawner.mouseUpUpdate();
   numOfCollisions = 0;
   towerToBeSelected = 0;
