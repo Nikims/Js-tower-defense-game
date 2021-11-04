@@ -55,8 +55,8 @@ class bullet {
             this.y,
             5,
             5,
-            this.target.x,
-            this.target.y,
+            this.source.type != "spike" ? this.IremberTarget.x : this.target.x,
+            this.source.type != "spike" ? this.IremberTarget.y : this.target.y,
             30,
             30
           )
