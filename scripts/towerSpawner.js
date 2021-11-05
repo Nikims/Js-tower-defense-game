@@ -54,6 +54,7 @@ class towerSpawner {
             towers[i].range / 3
           ) {
             numOfCollisions++;
+            this.currentlyDragging = false;
             break;
           }
         }

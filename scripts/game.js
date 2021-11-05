@@ -243,9 +243,15 @@ function keyup(key) {
 }
 
 function mousedown() {
-  testSpawner.mouseDownUpdate();
-  spikeTowerSpawner.mouseDownUpdate();
-  sniperSpawner.mouseDownUpdate();
+  if (
+    spikeTowerSpawner.currentlyDragging == false &&
+    testSpawner.currentlyDragging == false &&
+    sniperSpawner.currentlyDragging == false
+  ) {
+    testSpawner.mouseDownUpdate();
+    spikeTowerSpawner.mouseDownUpdate();
+    sniperSpawner.mouseDownUpdate();
+  }
 }
 function mouseup() {
   foriin(upgradeboxes, () => {
@@ -284,6 +290,7 @@ function mouseup() {
       }
     });
   });
+
   spikeTowerSpawner.mouseUpUpdate();
   testSpawner.mouseUpUpdate();
   sniperSpawner.mouseUpUpdate();
