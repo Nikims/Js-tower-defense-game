@@ -13,7 +13,7 @@ class tower {
   lowestHp = [];
   currentRotation = 0;
   dmg = 5;
-  selectionMode = "closest";
+  targetMode = "lowestHp";
 
   constructor(x, y, type, id) {
     this.type = type;
@@ -65,29 +65,31 @@ class tower {
     context.save();
     context.translate(this.x + 15, this.y + 15);
     try {
-      let nextRotaion =
-        Math.atan2(
-          this.y - this.closestDistance[1].y + 15,
-          this.x - this.closestDistance[1].x + 15
-        ) -
-        Math.PI / 2;
-      if (
-        !areColliding(
-          this.currentRotation,
-          1,
-          0.1,
-          0.1,
-          nextRotaion,
-          1,
-          0.1,
-          0,
-          1
-        )
-      ) {
-        if (this.currentRotation < nextRotaion) {
-          this.currentRotation += 0.1;
-        } else {
-          this.currentRotation -= 0.1;
+      if (this.closestDistance[1] != 9999) {
+        let nextRotaion =
+          Math.atan2(
+            this.y - this.closestDistance[1].y + 15,
+            this.x - this.closestDistance[1].x + 15
+          ) -
+          Math.PI / 2;
+        if (
+          !areColliding(
+            this.currentRotation,
+            1,
+            0.1,
+            0.1,
+            nextRotaion,
+            1,
+            0.1,
+            0,
+            1
+          )
+        ) {
+          if (this.currentRotation < nextRotaion) {
+            this.currentRotation += 0.12;
+          } else {
+            this.currentRotation -= 0.12;
+          }
         }
       }
     } catch (e) {
@@ -131,6 +133,9 @@ class tower {
       if (distanceToMe < this.closestDistance[0]) {
         this.closestDistance = [distanceToMe, this.enemiesInRange[i]];
       }
+      if (this.enemiesInRange[i].health < this.lowestHp[0]) {
+        this.lowestHp = [this.enemiesInRange[i].health, this.enemiesInRange[i]];
+      }
     }
 
     try {
@@ -140,7 +145,12 @@ class tower {
       ) {
         //console.log(this.dmg);
         if (this.type == "main" || this.type == "sniper") {
-          bullets.push(new bullet(this, this.closestDistance[1], this.dmg));
+          if (this.targetMode == "lowestHp") {
+            bullets.push(new bullet(this, this.lowestHp[1], this.dmg));
+          }
+          if (this.targetMode == "closest") {
+            bullets.push(new bullet(this, this.closestDistance[1], this.dmg));
+          }
         }
         if (this.type == "spike") {
           for (let i = 0; i < 360; i += 4) {

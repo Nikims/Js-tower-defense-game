@@ -60,6 +60,7 @@ upgradeboxes = [];
 upgradeboxes.push(new upgradeBox(700, 300, "speed"));
 upgradeboxes.push(new upgradeBox(700, 400, "damage"));
 upgradeboxes.push(new upgradeBox(700, 500, "range"));
+upgradeboxes.push(new upgradeBox(700, 500, "target Mode"));
 
 currentWave = 0;
 money = 300;
@@ -186,12 +187,18 @@ function draw() {
 
   context.font = "20px Ariel";
   context.fillText(money, 20, 20);
-  context.font = "20px Ariel";
-
+  if (towers.length > 0) {
+    context.fillText(
+      "Target mode: " + towers[selectedTower].targetMode,
+      650,
+      20
+    );
+    foriin(upgradeboxes, () => {
+      upgradeboxes[i].drawSelf();
+    });
+  }
   context.fillText(health, 20, 50);
-  foriin(upgradeboxes, () => {
-    upgradeboxes[i].drawSelf();
-  });
+
   if (isGameOver) {
     context.fillStyle = "red";
     context.font = "50px Ariel";
@@ -263,6 +270,13 @@ function mouseup() {
             money -= 60;
 
             towers[selectedTower].range += 5;
+          }
+        }
+        if (i == 3) {
+          if (towers[selectedTower].targetMode == "closest") {
+            towers[selectedTower].targetMode = "lowestHp";
+          } else {
+            towers[selectedTower].targetMode = "closest";
           }
         }
       }
