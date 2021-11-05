@@ -69,7 +69,13 @@ class bullet {
     context.save();
     context.translate(this.x + 12, this.y + 6);
     context.rotate(this.bulletRotation - 45 * (Math.PI / 2));
-    context.drawImage(bulletPic, 0, 0, 25, 12);
+    context.drawImage(
+      this.source.type == "spike" ? plasmabulletPic : bulletPic,
+      0,
+      0,
+      25,
+      12
+    );
     context.restore();
   }
 }
