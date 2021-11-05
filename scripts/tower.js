@@ -1,5 +1,5 @@
 class tower {
-  shootingSpeed = 20;
+  shootingSpeed = 50;
   hasntShotIn = 0;
   type = "";
   x = 0;

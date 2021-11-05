@@ -148,6 +148,9 @@ function update() {
         enemies[i].followNext();
       }
     });
+    foriin(towers, () => {
+      towers[i].aim();
+    });
 
     // for (i = 0; i < towers.length; i++) {
     //   towers[i].aimAt();
@@ -164,7 +167,6 @@ function draw() {
   }
   foriin(towers, () => {
     towers[i].drawSelf();
-    towers[i].aim();
   });
 
   if (mapEditMode == 1) {
