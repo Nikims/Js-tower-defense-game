@@ -22,8 +22,8 @@ class bullet {
     let dist = Math.sqrt(
       Math.pow(xDistToNextNode, 2) + Math.pow(yDistToNextNode, 2)
     );
-    this.x -= 9 * Math.sin(xDistToNextNode / dist);
-    this.y -= 9 * Math.sin(yDistToNextNode / dist);
+    this.x -= 6 * Math.sin(xDistToNextNode / dist);
+    this.y -= 6 * Math.sin(yDistToNextNode / dist);
     if (enemies.length != 0) {
       for (let i = 0; i < enemies.length; i++) {
         if (
@@ -48,26 +48,18 @@ class bullet {
           //console.log("lmao" + this.dmg);
           bullets.splice(bullets.indexOf(this), 1);
         }
-
-        if (
-          areColliding(
-            this.x,
-            this.y,
-            5,
-            5,
-            this.source.type != "spike" ? this.IremberTarget.x : this.target.x,
-            this.source.type != "spike" ? this.IremberTarget.y : this.target.y,
-            30,
-            30
-          )
-        ) {
-          bullets.splice(bullets.indexOf(this), 1);
-        }
       }
+    }
 
-      // this.y += 5 * Math.sin(this.y / dist);
-    } else {
+    if (
+      areColliding(this.x, this.y, 5, 5, this.target.x, this.target.y, 30, 30)
+    ) {
       bullets.splice(bullets.indexOf(this), 1);
+    }
+
+    // this.y += 5 * Math.sin(this.y / dist);
+    else {
+      //bullets.splice(bullets.indexOf(this), 1);
     }
   }
   drawSelf() {
