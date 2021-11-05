@@ -5,6 +5,7 @@ class bullet {
   source = 0;
   target = 0;
   IremberTarget = {};
+  bulletRotation;
   constructor(source, target, dmg) {
     this.x = source.x;
     this.y = source.y;
@@ -15,6 +16,8 @@ class bullet {
     this.IremberTarget.y = target.y;
     this.IremberTarget.x -= (this.x - this.IremberTarget.x) * 4;
     this.IremberTarget.y -= (this.y - this.IremberTarget.y) * 4;
+    this.bulletRotation =
+      Math.atan2(this.y - this.target.y, this.x - this.target.x) - Math.PI / 2;
   }
   flyTo() {
     let xDistToNextNode = this.x - this.target.x;
@@ -63,6 +66,10 @@ class bullet {
     }
   }
   drawSelf() {
-    context.fillRect(this.x, this.y, 10, 10);
+    context.save();
+    context.translate(this.x + 12, this.y + 6);
+    context.rotate(this.bulletRotation - 45 * (Math.PI / 2));
+    context.drawImage(bulletPic, 0, 0, 25, 12);
+    context.restore();
   }
 }
