@@ -68,8 +68,14 @@ class tower {
       if (this.closestDistance[1] != 9999) {
         let nextRotaion =
           Math.atan2(
-            this.y - this.closestDistance[1].y + 15,
-            this.x - this.closestDistance[1].x + 15
+            this.y -
+              (this.targetMode == "closest"
+                ? this.closestDistance[1].y
+                : this.lowestHp[1].y + 15),
+            this.x -
+              (this.targetMode == "closest"
+                ? this.closestDistance[1].x
+                : this.lowestHp[1].x + 15)
           ) -
           Math.PI / 2;
         if (
