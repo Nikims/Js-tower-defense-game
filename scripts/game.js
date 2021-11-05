@@ -47,7 +47,7 @@ class upgradeBox {
     context.fillRect(this.x, this.y, 200, 60);
 
     context.fillStyle = "white";
-    context.fillText("Upgrade " + this.type, this.x + 40, this.y + 35);
+    context.fillText(this.type, this.x + 40, this.y + 35);
     context.fillStyle = "black";
   }
   checkMouseUpCollision(whatdo) {
@@ -57,10 +57,10 @@ class upgradeBox {
   }
 }
 upgradeboxes = [];
-upgradeboxes.push(new upgradeBox(700, 300, "speed"));
-upgradeboxes.push(new upgradeBox(700, 400, "damage"));
-upgradeboxes.push(new upgradeBox(700, 500, "range"));
-upgradeboxes.push(new upgradeBox(700, 600, "target Mode"));
+upgradeboxes.push(new upgradeBox(700, 300, "Upgrade speed"));
+upgradeboxes.push(new upgradeBox(700, 400, "Upgrade damage"));
+upgradeboxes.push(new upgradeBox(700, 500, "Upgrade range"));
+upgradeboxes.push(new upgradeBox(950, 500, "Change target Mode"));
 
 currentWave = 0;
 money = 300;
