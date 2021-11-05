@@ -60,7 +60,7 @@ upgradeboxes = [];
 upgradeboxes.push(new upgradeBox(700, 300, "speed"));
 upgradeboxes.push(new upgradeBox(700, 400, "damage"));
 upgradeboxes.push(new upgradeBox(700, 500, "range"));
-upgradeboxes.push(new upgradeBox(700, 500, "target Mode"));
+upgradeboxes.push(new upgradeBox(700, 600, "target Mode"));
 
 currentWave = 0;
 money = 300;

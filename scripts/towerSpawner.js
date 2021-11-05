@@ -54,6 +54,7 @@ class towerSpawner {
             towers[i].range / 3
           ) {
             numOfCollisions++;
+            break;
           }
         }
         if (numOfCollisions == 0) {
