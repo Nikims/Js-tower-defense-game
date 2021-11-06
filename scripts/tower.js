@@ -33,9 +33,6 @@ class tower {
     // this.isSelected = 1;
   }
   drawSelf() {
-    if (!this.isSelected == 1 && towers.indexOf(this) == 1) {
-      console.log("dob");
-    }
     // for (let i = 0; i < circlesCoords.get(this.range).length; i++) {
     //   context.fillRect(
     //     circlesCoords.get(this.range)[i].xCoords + this.x,
@@ -159,7 +156,7 @@ class tower {
           }
         }
         if (this.type == "spike") {
-          for (let i = 0; i < 360; i += 4) {
+          for (let i = 0; i < 360; i += 10) {
             bullets.push(
               new bullet(
                 this,
@@ -171,6 +168,9 @@ class tower {
               )
             );
           }
+        }
+        if (this.type == "electric") {
+          arcs.push(new arc(this, this.range));
         }
       }
     } catch (e) {

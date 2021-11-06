@@ -84,6 +84,8 @@ money = 300;
 testSpawner = new towerSpawner(700, 100, "main");
 spikeTowerSpawner = new towerSpawner(800, 100, "spike");
 sniperSpawner = new towerSpawner(900, 100, "sniper");
+electricsSpawner = new towerSpawner(900, 200, "electric");
+
 class node {
   x = 0;
   y = 0;
@@ -104,6 +106,7 @@ nodes = [
 ];
 
 bullets = [];
+arcs = [];
 towers = [];
 
 enemies = [];
@@ -119,9 +122,13 @@ enemies = [];
 // }
 function update() {
   if (!isGameOver) {
+    foriin(arcs, () => {
+      arcs[i].updateArc();
+    });
     testSpawner.updatePos();
     spikeTowerSpawner.updatePos();
     sniperSpawner.updatePos();
+    electricsSpawner.updatePos();
 
     updates++;
     foriin(bullets, () => {
@@ -186,10 +193,14 @@ function draw() {
   foriin(bullets, () => {
     bullets[i].drawSelf();
   });
+  foriin(arcs, () => {
+    arcs[i].drawSelf();
+  });
   // context.drawImage(towerPic, tempTower.x, tempTower.y, 60, 60);
   testSpawner.drawSelf();
   spikeTowerSpawner.drawSelf();
   sniperSpawner.drawSelf();
+  electricsSpawner.drawSelf();
 
   context.font = "20px Ariel";
   context.fillText(money, 20, 20);
@@ -250,11 +261,13 @@ function mousedown() {
   if (
     spikeTowerSpawner.currentlyDragging == false &&
     testSpawner.currentlyDragging == false &&
-    sniperSpawner.currentlyDragging == false
+    sniperSpawner.currentlyDragging == false &&
+    electricsSpawner.currentlyDragging == false
   ) {
     testSpawner.mouseDownUpdate();
     spikeTowerSpawner.mouseDownUpdate();
     sniperSpawner.mouseDownUpdate();
+    electricsSpawner.mouseDownUpdate();
   }
 }
 function mouseup() {
@@ -298,6 +311,7 @@ function mouseup() {
   spikeTowerSpawner.mouseUpUpdate();
   testSpawner.mouseUpUpdate();
   sniperSpawner.mouseUpUpdate();
+  electricsSpawner.mouseUpUpdate();
 
   numOfCollisions = 0;
   towerToBeSelected = 0;

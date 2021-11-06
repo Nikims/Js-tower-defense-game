@@ -50,6 +50,7 @@ class bullet {
           }
           //console.log("lmao" + this.dmg);
           bullets.splice(bullets.indexOf(this), 1);
+          break;
         }
       }
     }

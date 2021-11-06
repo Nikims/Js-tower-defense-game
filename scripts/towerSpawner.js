@@ -14,7 +14,7 @@ class towerSpawner {
   }
   updatePos() {
     if (this.currentlyDragging) {
-      console.log(mouseX - this.x);
+      //  console.log(mouseX - this.x);
       this.x = mouseX - 30;
       this.y = mouseY - 30;
 
