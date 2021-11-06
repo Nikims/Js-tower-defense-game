@@ -5,17 +5,19 @@ class arc {
   range = 0;
   nodes = [];
   updatesAtStart = updates;
+  damage = 0;
   constructor(source, range) {
     this.source = source;
     this.range = range;
     this.nodes = source.enemiesInRange;
     this.nodes.unshift(source);
+    this.damage = source.dmg;
   }
   updateArc() {
     if (updates < this.updatesAtStart + 15) {
       for (let i = 1; i < this.nodes.length; i++) {
-        this.nodes[i].health -= 1;
-        money += 1;
+        this.nodes[i].health -= this.damage;
+        money += this.damage;
       }
     } else {
       arcs.splice(arcs.indexOf(this), 1);

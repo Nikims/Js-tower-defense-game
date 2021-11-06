@@ -106,6 +106,9 @@ nodes = [
 ];
 
 bullets = [];
+bullets.push([]);
+bullets.push([]);
+
 arcs = [];
 towers = [];
 
@@ -131,9 +134,11 @@ function update() {
     electricsSpawner.updatePos();
 
     updates++;
-    foriin(bullets, () => {
-      bullets[i].flyTo();
-    });
+    for (i = 0; i < bullets.length; i++) {
+      for (j = 0; j < bullets[i].length; j++) {
+        bullets[i][j].flyTo();
+      }
+    }
 
     if (updates % waves[currentWave].time == 0) {
       if (waves[currentWave].number > 0) {
@@ -191,7 +196,9 @@ function draw() {
     x;
   }
   foriin(bullets, () => {
-    bullets[i].drawSelf();
+    for (j = 0; j < bullets[i].length; j++) {
+      bullets[i][j].drawSelf();
+    }
   });
   foriin(arcs, () => {
     arcs[i].drawSelf();

@@ -25,6 +25,9 @@ class tower {
       this.dmg = 70;
       this.shootingSpeed = 40;
     }
+    if (this.type == "electric") {
+      this.dmg = 1;
+    }
     // drawCircle(this.range);
 
     // for (let i = 0; i < towers.length; i++) {
@@ -149,15 +152,15 @@ class tower {
         //console.log(this.dmg);
         if (this.type == "main" || this.type == "sniper") {
           if (this.targetMode == "lowestHp") {
-            bullets.push(new bullet(this, this.lowestHp[1], this.dmg));
+            bullets[0].push(new bullet(this, this.lowestHp[1], this.dmg));
           }
           if (this.targetMode == "closest") {
-            bullets.push(new bullet(this, this.closestDistance[1], this.dmg));
+            bullets[0].push(new bullet(this, this.closestDistance[1], this.dmg));
           }
         }
         if (this.type == "spike") {
           for (let i = 0; i < 360; i += 10) {
-            bullets.push(
+            bullets[1].push(
               new bullet(
                 this,
                 {

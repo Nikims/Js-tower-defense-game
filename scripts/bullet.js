@@ -48,8 +48,15 @@ class bullet {
             enemies[i].health = -1;
             money += enemies[i].health * 2;
           }
-          //console.log("lmao" + this.dmg);
-          bullets.splice(bullets.indexOf(this), 1);
+          if (this.source.type == "spike") {
+            //console.log("lmao" + this.dmg);
+            // bullets[0].splice(bullets[0].indexOf(this));
+          } else if (
+            this.source.type == "normal" ||
+            this.source.type == "sniper"
+          ) {
+            bullets[1].splice(bullets[1].indexOf(this));
+          }
           break;
         }
       }
@@ -58,9 +65,13 @@ class bullet {
     if (
       areColliding(this.x, this.y, 5, 5, this.target.x, this.target.y, 30, 30)
     ) {
-      bullets.splice(bullets.indexOf(this), 1);
+      if (this.source.type == "spike") {
+        bullets[1].splice(bullets[1].indexOf(this), 1);
+      }
+      if (this.source.type == "sniper") {
+        bullets[0].splice(bullets[0].indexOf(this), 1);
+      }
     }
-
     // this.y += 5 * Math.sin(this.y / dist);
     else {
       //bullets.splice(bullets.indexOf(this), 1);
