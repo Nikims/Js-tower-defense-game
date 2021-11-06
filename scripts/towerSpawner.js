@@ -46,16 +46,18 @@ class towerSpawner {
     if (money > 200 && this.currentlyDragging == true) {
       if (grid[Math.floor(mouseX / 60)][Math.floor(mouseY / 60)] == 1) {
         for (let i = 0; i < towers.length; i++) {
-          if (
-            Math.sqrt(
-              Math.pow(mouseX - 10 - towers[i].x, 2) +
-                Math.pow(mouseY - 30 - towers[i].y, 2)
-            ) <
-            towers[i].range / 3
-          ) {
-            numOfCollisions++;
-            this.currentlyDragging = false;
-            break;
+          if (towers[i].type != "sniper") {
+            if (
+              Math.sqrt(
+                Math.pow(mouseX - 10 - towers[i].x, 2) +
+                  Math.pow(mouseY - 30 - towers[i].y, 2)
+              ) <
+              towers[i].range / 3
+            ) {
+              numOfCollisions++;
+              this.currentlyDragging = false;
+              break;
+            }
           }
         }
         if (numOfCollisions == 0) {
