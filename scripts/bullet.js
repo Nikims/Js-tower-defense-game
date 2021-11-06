@@ -52,7 +52,7 @@ class bullet {
             //console.log("lmao" + this.dmg);
             // bullets[0].splice(bullets[0].indexOf(this));
           } else if (
-            this.source.type == "normal" ||
+            this.source.type == "main" ||
             this.source.type == "sniper"
           ) {
             bullets[1].splice(bullets[1].indexOf(this));
@@ -67,8 +67,7 @@ class bullet {
     ) {
       if (this.source.type == "spike") {
         bullets[1].splice(bullets[1].indexOf(this), 1);
-      }
-      if (this.source.type == "sniper") {
+      } else if (this.source.type == "sniper" || this.source.type == "main") {
         bullets[0].splice(bullets[0].indexOf(this), 1);
       }
     }
