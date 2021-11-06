@@ -48,7 +48,7 @@ class bullet {
             enemies[i].health = -1;
             money += enemies[i].health * 2;
           }
-          if (this.source.type == "spike") {
+          if (this.source.type == "shockwave") {
             //console.log("lmao" + this.dmg);
             // bullets[0].splice(bullets[0].indexOf(this));
           } else if (
@@ -65,7 +65,7 @@ class bullet {
     if (
       areColliding(this.x, this.y, 5, 5, this.target.x, this.target.y, 30, 30)
     ) {
-      if (this.source.type == "spike") {
+      if (this.source.type == "shockwave") {
         bullets[1].splice(bullets[1].indexOf(this), 1);
       } else if (this.source.type == "sniper" || this.source.type == "main") {
         bullets[0].splice(bullets[0].indexOf(this), 1);
@@ -81,11 +81,11 @@ class bullet {
     context.translate(this.x + 12, this.y + 6);
     context.rotate(this.bulletRotation - 45 * (Math.PI / 2));
     context.drawImage(
-      this.source.type == "spike" ? plasmabulletPic : bulletPic,
+      this.source.type == "shockwave" ? plasmabulletPic : bulletPic,
       0,
       0,
-      25,
-      12
+      40,
+      20
     );
     context.restore();
   }

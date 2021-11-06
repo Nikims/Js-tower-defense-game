@@ -29,7 +29,13 @@ class towerSpawner {
     }
   }
   drawSelf() {
-    context.drawImage(towerPic, this.x, this.y, 60, 60);
+    if (this.type == "electric") {
+      context.drawImage(electricTowerPic, this.x, this.y, 55, 60);
+    } else if (this.type == "shockwave") {
+      context.drawImage(shockWavePic, this.x, this.y, 60, 60);
+    } else {
+      context.drawImage(towerPic, this.x, this.y, 60, 60);
+    }
     if (money < 200) {
       context.fillStyle = "red";
       context.globalAlpha = 0.4;
@@ -37,6 +43,7 @@ class towerSpawner {
       context.globalAlpha = 1;
     }
     context.fillStyle = "black";
+    context.fillText(this.type, this.x + 15, this.y - 15);
   }
   mouseUpUpdate() {
     this.x = this.ogX;
@@ -61,7 +68,7 @@ class towerSpawner {
           towers.push(
             new tower(mouseX - 7, mouseY - 15, this.type, towers.length)
           );
-          if (this.type == "spike") {
+          if (this.type == "shockwave") {
             towers[towers.length - 1].dmg = 2;
           }
           money -= 200;

@@ -10,7 +10,7 @@ class arc {
     this.source = source;
     this.range = range;
     this.nodes = source.enemiesInRange;
-    this.nodes.unshift(source);
+    this.nodes.unshift({ x: source.x + 15, y: source.y + 10 });
     this.damage = source.dmg;
   }
   updateArc() {

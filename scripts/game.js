@@ -10,6 +10,11 @@ robotPic = new Image();
 robotPic.src = "robot1.png";
 towerPic = new Image();
 towerPic.src = "tower1big.png";
+electricTowerPic = new Image();
+electricTowerPic.src = "electricTower.png";
+shockWavePic = new Image();
+shockWavePic.src = "shockWaveTower.png";
+
 bulletPic = new Image();
 bulletPic.src = "bullet.png";
 plasmabulletPic = new Image();
@@ -82,7 +87,7 @@ money = 300;
 // }
 
 testSpawner = new towerSpawner(700, 100, "main");
-spikeTowerSpawner = new towerSpawner(800, 100, "spike");
+shockwaveTowerSpawner = new towerSpawner(800, 100, "shockwave");
 sniperSpawner = new towerSpawner(900, 100, "sniper");
 electricsSpawner = new towerSpawner(900, 200, "electric");
 
@@ -129,7 +134,7 @@ function update() {
       arcs[i].updateArc();
     });
     testSpawner.updatePos();
-    spikeTowerSpawner.updatePos();
+    shockwaveTowerSpawner.updatePos();
     sniperSpawner.updatePos();
     electricsSpawner.updatePos();
 
@@ -205,7 +210,7 @@ function draw() {
   });
   // context.drawImage(towerPic, tempTower.x, tempTower.y, 60, 60);
   testSpawner.drawSelf();
-  spikeTowerSpawner.drawSelf();
+  shockwaveTowerSpawner.drawSelf();
   sniperSpawner.drawSelf();
   electricsSpawner.drawSelf();
 
@@ -266,13 +271,13 @@ function keyup(key) {
 
 function mousedown() {
   if (
-    spikeTowerSpawner.currentlyDragging == false &&
+    shockwaveTowerSpawner.currentlyDragging == false &&
     testSpawner.currentlyDragging == false &&
     sniperSpawner.currentlyDragging == false &&
     electricsSpawner.currentlyDragging == false
   ) {
     testSpawner.mouseDownUpdate();
-    spikeTowerSpawner.mouseDownUpdate();
+    shockwaveTowerSpawner.mouseDownUpdate();
     sniperSpawner.mouseDownUpdate();
     electricsSpawner.mouseDownUpdate();
   }
@@ -315,7 +320,7 @@ function mouseup() {
     });
   });
 
-  spikeTowerSpawner.mouseUpUpdate();
+  shockwaveTowerSpawner.mouseUpUpdate();
   testSpawner.mouseUpUpdate();
   sniperSpawner.mouseUpUpdate();
   electricsSpawner.mouseUpUpdate();
