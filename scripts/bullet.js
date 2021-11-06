@@ -14,8 +14,8 @@ class bullet {
     this.target = target;
     this.IremberTarget.x = target.x;
     this.IremberTarget.y = target.y;
-    this.IremberTarget.x -= (this.x - this.IremberTarget.x) * 4;
-    this.IremberTarget.y -= (this.y - this.IremberTarget.y) * 4;
+    this.IremberTarget.x -= (this.x - this.target.x) * 4;
+    this.IremberTarget.y -= (this.y - this.target.y) * 4;
     this.bulletRotation =
       Math.atan2(this.y - this.target.y, this.x - this.target.x) - Math.PI / 2;
   }
@@ -30,23 +30,13 @@ class bullet {
     if (enemies.length != 0) {
       for (let i = 0; i < enemies.length; i++) {
         if (
-          areColliding(
-            this.x,
-            this.y,
-            10,
-            10,
-            enemies[i].x,
-            enemies[i].y,
-            30,
-            30
-          )
+          areColliding(this.x, this.y, 5, 5, enemies[i].x, enemies[i].y, 30, 30)
         ) {
           if (enemies[i].health - this.dmg > 0) {
-            money += this.dmg / 2;
             enemies[i].health -= this.dmg;
           } else {
             enemies[i].health = -1;
-            money += enemies[i].health / 2;
+            money += 200;
           }
           if (this.source.type == "shockwave") {
             //console.log("lmao" + this.dmg);
@@ -78,7 +68,7 @@ class bullet {
   }
   drawSelf() {
     context.save();
-    context.translate(this.x + 12, this.y + 6);
+    context.translate(this.x, this.y);
     context.rotate(this.bulletRotation - 45 * (Math.PI / 2));
     context.drawImage(
       this.source.type == "shockwave" ? plasmabulletPic : bulletPic,

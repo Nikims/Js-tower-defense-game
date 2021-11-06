@@ -12,7 +12,7 @@ class tower {
   closestDistance = [];
   lowestHp = [];
   currentRotation = 0;
-  dmg = 5;
+  dmg = 30;
   targetMode = "lowestHp";
   price = [100, 100, 100];
 
@@ -23,7 +23,7 @@ class tower {
     this.myId = id;
     if (this.type == "sniper") {
       this.range = 900;
-      this.dmg = 70;
+      this.dmg = 30;
       this.shootingSpeed = 40;
     }
     if (this.type == "electric") {
