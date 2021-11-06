@@ -14,6 +14,7 @@ class tower {
   currentRotation = 0;
   dmg = 5;
   targetMode = "lowestHp";
+  price = [100, 100, 100];
 
   constructor(x, y, type, id) {
     this.type = type;

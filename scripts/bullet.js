@@ -42,11 +42,11 @@ class bullet {
           )
         ) {
           if (enemies[i].health - this.dmg > 0) {
-            money += this.dmg * 2;
+            money += this.dmg / 2;
             enemies[i].health -= this.dmg;
           } else {
             enemies[i].health = -1;
-            money += enemies[i].health * 2;
+            money += enemies[i].health / 2;
           }
           if (this.source.type == "shockwave") {
             //console.log("lmao" + this.dmg);
@@ -84,8 +84,8 @@ class bullet {
       this.source.type == "shockwave" ? plasmabulletPic : bulletPic,
       0,
       0,
-      40,
-      20
+      this.source.type == "shockwave" ? 40 : 20,
+      this.source.type == "shockwave" ? 20 : 10
     );
     context.restore();
   }

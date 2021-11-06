@@ -30,13 +30,13 @@ isGameOver = false;
 deltaMouseX = 0;
 deltaMouseY = 0;
 
-waves.push({ time: 100, number: 20, health: 100 });
+waves.push({ time: 100, number: 20, health: 150 });
+waves.push({ time: 1000, number: 0, health: 150 });
+waves.push({ time: 40, number: 40, health: 300 });
 waves.push({ time: 1000, number: 0, health: 100 });
-waves.push({ time: 40, number: 40, health: 200 });
+waves.push({ time: 30, number: 70, health: 400 });
 waves.push({ time: 1000, number: 0, health: 100 });
-waves.push({ time: 30, number: 70, health: 300 });
-waves.push({ time: 1000, number: 0, health: 100 });
-waves.push({ time: 20, number: 100, health: 400 });
+waves.push({ time: 20, number: 100, health: 450 });
 waves.push({ time: 4, number: Infinity, health: 500 });
 function foriin(arr, action) {
   for (i = 0; i < arr.length; i++) {
@@ -216,6 +216,11 @@ function draw() {
 
   context.font = "20px Ariel";
   context.fillText(money, 20, 20);
+  if (selectedTower != -1) {
+    for (i = 0; i < towers[selectedTower].price.length; i++) {
+      context.fillText(towers[selectedTower].price[i], 700, i * 100 + 300);
+    }
+  }
   if (towers.length > 0) {
     context.fillText(
       "Target mode: " + towers[selectedTower].targetMode,
@@ -286,34 +291,31 @@ function mouseup() {
   foriin(upgradeboxes, () => {
     upgradeboxes[i].checkMouseUpCollision(() => {
       if (selectedTower != -1) {
-        if (i == 0) {
-          if (money > 60) {
+        if (money > towers[selectedTower].price[i]) {
+          if (i == 0) {
             towers[selectedTower].shootingSpeed = Math.floor(
-              towers[selectedTower].shootingSpeed / 1.5
+              towers[selectedTower].shootingSpeed / 1.1
             );
-
-            money -= 60;
           }
-        }
-        if (i == 1) {
-          if (money > 60) {
-            money -= 60;
 
+          if (i == 1) {
             towers[selectedTower].dmg += 5;
           }
-        }
-        if (i == 2) {
-          if (money > 60) {
-            money -= 60;
 
+          if (i == 2) {
             towers[selectedTower].range += 5;
           }
-        }
-        if (i == 3) {
-          if (towers[selectedTower].targetMode == "closest") {
-            towers[selectedTower].targetMode = "lowestHp";
-          } else {
-            towers[selectedTower].targetMode = "closest";
+          if (i < 3) {
+            money -= towers[selectedTower].price[i];
+
+            towers[selectedTower].price[i] *= 1.5;
+          }
+          if (i == 3) {
+            if (towers[selectedTower].targetMode == "closest") {
+              towers[selectedTower].targetMode = "lowestHp";
+            } else {
+              towers[selectedTower].targetMode = "closest";
+            }
           }
         }
       }

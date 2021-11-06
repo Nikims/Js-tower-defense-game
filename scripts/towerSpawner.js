@@ -66,7 +66,7 @@ class towerSpawner {
         }
         if (numOfCollisions == 0) {
           towers.push(
-            new tower(mouseX - 7, mouseY - 15, this.type, towers.length)
+            new tower(mouseX - 20, mouseY - 20, this.type, towers.length)
           );
           if (this.type == "shockwave") {
             towers[towers.length - 1].dmg = 2;
