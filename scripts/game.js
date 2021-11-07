@@ -141,6 +141,8 @@ function update() {
     foriin(arcs, () => {
       arcs[i].updateArc();
     });
+    //to avoid unnecessary calculations
+
     testSpawner.updatePos();
     shockwaveTowerSpawner.updatePos();
     sniperSpawner.updatePos();
@@ -316,7 +318,9 @@ function mouseup() {
           if (i < 3) {
             money -= towers[selectedTower].price[i];
 
-            towers[selectedTower].price[i] *= 1.3;
+            towers[selectedTower].price[i] = Math.round(
+              towers[selectedTower].price[i] * 1.4
+            );
           }
         }
         if (i == 3) {

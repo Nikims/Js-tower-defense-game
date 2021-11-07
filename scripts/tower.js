@@ -24,7 +24,7 @@ class tower {
     if (this.type == "sniper") {
       this.range = 900;
       this.dmg = 30;
-      this.shootingSpeed = 40;
+      this.shootingSpeed = 120;
     }
     if (this.type == "electric") {
       this.dmg = 1;
@@ -98,9 +98,9 @@ class tower {
             )
           ) {
             if (this.currentRotation < nextRotaion) {
-              this.currentRotation += 0.12;
+              this.currentRotation += 0.1;
             } else {
-              this.currentRotation -= 0.12;
+              this.currentRotation -= 0.1;
             }
           }
         }
@@ -111,7 +111,7 @@ class tower {
       if (this.closestDistance[1] != undefined) {
         // console.log(enemies[towers[0].closestDistance[1]].x);
         try {
-          context.rotate(this.currentRotation + (30 * Math.PI) / 180);
+          context.rotate(this.currentRotation + (0 * Math.PI) / 180);
         } catch (e) {
           //console.log("cope");
         }
@@ -175,7 +175,7 @@ class tower {
           }
         }
         if (this.type == "shockwave") {
-          for (let i = 0; i < 360; i += 10) {
+          for (let i = 0; i < 370; i += 10) {
             bullets[1].push(
               new bullet(
                 {
