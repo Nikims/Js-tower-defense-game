@@ -4,7 +4,7 @@ mapEditMode = 0;
 devMode = 0;
 mapImgs = [];
 mapImgs[0] = new Image();
-mapImgs[0].src = "map1fixed.png";
+mapImgs[0].src = "map1fixed-v2.png";
 circleImg = new Image();
 circleImg.src = "tqkrug.png";
 robotPic = new Image();
@@ -137,7 +137,7 @@ function update() {
   for (i = 0; i < particleSystems.length; i++) {
     particleSystems[i].updateParticles();
   }
- 
+
   if (updates % 50 == 0) {
     money += 15;
   }
@@ -191,11 +191,15 @@ function update() {
 }
 function draw() {
   context.drawImage(mapImgs[currentLevel], 0, 0, 600, 600);
+  for (i = 0; i < particleSystems.length; i++) {
+    particleSystems[i].drawParticles();
+  }
   if (enemies.length > 0) {
     foriin(enemies, () => {
       enemies[i].drawSelf();
     });
   }
+
   foriin(towers, () => {
     towers[i].drawSelf();
   });
@@ -212,7 +216,6 @@ function draw() {
         context.strokeRect(j * 60, i * 60, 60, 60);
       }
     });
-    x;
   }
   foriin(bullets, () => {
     for (j = 0; j < bullets[i].length; j++) {
@@ -251,10 +254,6 @@ function draw() {
     context.fillStyle = "red";
     context.font = "50px Ariel";
     context.fillText("Game over!", 170, 250);
-  }
-
-  for (i = 0; i < particleSystems.length; i++) {
-    particleSystems[i].drawParticles();
   }
 
   // tuk naprogramirai kakvo da se risuva
