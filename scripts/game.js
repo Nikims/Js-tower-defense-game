@@ -133,6 +133,10 @@ enemies = [];
 //   }
 // }
 function update() {
+  //passive income grindset
+  if (updates % 50 == 0) {
+    money += 15;
+  }
   if (!isGameOver) {
     foriin(arcs, () => {
       arcs[i].updateArc();
@@ -312,7 +316,7 @@ function mouseup() {
           if (i < 3) {
             money -= towers[selectedTower].price[i];
 
-            towers[selectedTower].price[i] *= 1.5;
+            towers[selectedTower].price[i] *= 1.3;
           }
         }
         if (i == 3) {

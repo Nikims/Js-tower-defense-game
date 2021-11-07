@@ -10,7 +10,7 @@ class bullet {
     this.x = source.x;
     this.y = source.y;
     this.source = source;
-    this.dmg = dmg;
+    this.dmg = source.dmg;
     this.target = target;
     this.IremberTarget.x = target.x;
     this.IremberTarget.y = target.y;
@@ -36,17 +36,17 @@ class bullet {
             enemies[i].health -= this.dmg;
           } else {
             enemies[i].health = -1;
-            money += 200;
+            money += 40;
           }
-          if (this.source.type == "shockwave") {
-            //console.log("lmao" + this.dmg);
-            // bullets[0].splice(bullets[0].indexOf(this));
-          } else if (
-            this.source.type == "main" ||
-            this.source.type == "sniper"
-          ) {
-            bullets[1].splice(bullets[1].indexOf(this));
-          }
+          // if (this.source.type == "shockwave") {
+          //   //console.log("lmao" + this.dmg);
+          //   // bullets[0].splice(bullets[0].indexOf(this));
+          // } else if (
+          //   this.source.type == "main" ||
+          //   this.source.type == "sniper"
+          // ) {
+          bullets[1].splice(bullets[1].indexOf(this));
+          // }
           break;
         }
       }

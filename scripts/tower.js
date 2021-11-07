@@ -29,6 +29,9 @@ class tower {
     if (this.type == "electric") {
       this.dmg = 1;
     }
+    if (this.type == "shockwave") {
+      this.dmg = 10;
+    }
     // drawCircle(this.range);
 
     // for (let i = 0; i < towers.length; i++) {
@@ -173,7 +176,13 @@ class tower {
           for (let i = 0; i < 360; i += 10) {
             bullets[1].push(
               new bullet(
-                this,
+                {
+                  x: this.x + 30,
+                  y: this.y + 30,
+                  type: this.type,
+                  range: this.range,
+                  dmg: this.dmg,
+                },
                 {
                   x: this.x + this.range * Math.cos((i * Math.PI) / 180),
                   y: this.y + this.range * Math.sin((i * Math.PI) / 180),

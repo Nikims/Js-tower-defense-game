@@ -69,10 +69,6 @@ class towerSpawner {
             new tower(mouseX - 30, mouseY - 60, this.type, towers.length)
           );
           selectedTower = towers.indexOf(towers[towers.length - 1]);
-
-          if (this.type == "shockwave") {
-            towers[towers.length - 1].dmg = 2;
-          }
           money -= 200;
         }
       }
