@@ -31,7 +31,7 @@ class tower {
       this.dmg = 1;
     }
     if (this.type == "shockwave") {
-      this.dmg = 10;
+      this.dmg = 5;
       this.shootingSpeed = 100;
     }
     // drawCircle(this.range);
