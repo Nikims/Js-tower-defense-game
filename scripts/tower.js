@@ -31,6 +31,7 @@ class tower {
     }
     if (this.type == "shockwave") {
       this.dmg = 10;
+      this.shootingSpeed = 100;
     }
     // drawCircle(this.range);
 
@@ -106,13 +107,14 @@ class tower {
       } catch (e) {
         //console.log("cope");
       }
-    }
-    if (this.closestDistance[1] != undefined) {
-      // console.log(enemies[towers[0].closestDistance[1]].x);
-      try {
-        context.rotate(this.currentRotation + (30 * Math.PI) / 180);
-      } catch (e) {
-        //console.log("cope");
+
+      if (this.closestDistance[1] != undefined) {
+        // console.log(enemies[towers[0].closestDistance[1]].x);
+        try {
+          context.rotate(this.currentRotation + (30 * Math.PI) / 180);
+        } catch (e) {
+          //console.log("cope");
+        }
       }
     }
     if (this.type == "electric") {
@@ -177,8 +179,8 @@ class tower {
             bullets[1].push(
               new bullet(
                 {
-                  x: this.x + 30,
-                  y: this.y + 30,
+                  x: this.x,
+                  y: this.y,
                   type: this.type,
                   range: this.range,
                   dmg: this.dmg,

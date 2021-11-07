@@ -6,6 +6,7 @@ class bullet {
   target = 0;
   IremberTarget = {};
   bulletRotation;
+  canTakeDamage = true;
   constructor(source, target, dmg) {
     this.x = source.x + 20;
     this.y = source.y + 30;
@@ -29,25 +30,45 @@ class bullet {
     this.y -= 6 * Math.sin(yDistToNextNode / dist);
     if (enemies.length != 0) {
       for (let i = 0; i < enemies.length; i++) {
-        if (
-          areColliding(this.x, this.y, 5, 5, enemies[i].x, enemies[i].y, 30, 30)
-        ) {
-          if (enemies[i].health - this.dmg > 0) {
-            enemies[i].health -= this.dmg;
-          } else {
-            enemies[i].health = -1;
-            money += 40;
+        if (this.canTakeDamage) {
+          if (
+            areColliding(
+              this.x,
+              this.y,
+              5,
+              5,
+              enemies[i].x,
+              enemies[i].y,
+              30,
+              30
+            )
+          ) {
+            if (enemies[i].health - this.dmg > 0) {
+              enemies[i].health -= this.dmg;
+            } else {
+              enemies[i].health = -1;
+              money += 40;
+            }
+
+            // if (this.source.type == "shockwave") {
+            //   //console.log("lmao" + this.dmg);
+            //   // bullets[0].splice(bullets[0].indexOf(this));
+            // } else if (
+            //   this.source.type == "main" ||
+            //   this.source.type == "sniper"
+            // ) {
+            if (this.canTakeDamage == false) {
+              console.log("shit");
+            }
+            if (this.canTakeDamage) {
+              this.canTakeDamage = false;
+              if (this.type != "shockwave") {
+                bullets[1].splice(bullets.indexOf(this), 1);
+              }
+              // bullets[1].splice(bullets[1].indexOf(this));
+            }
+            break;
           }
-          // if (this.source.type == "shockwave") {
-          //   //console.log("lmao" + this.dmg);
-          //   // bullets[0].splice(bullets[0].indexOf(this));
-          // } else if (
-          //   this.source.type == "main" ||
-          //   this.source.type == "sniper"
-          // ) {
-          bullets[1].splice(bullets[1].indexOf(this));
-          // }
-          break;
         }
       }
     }
