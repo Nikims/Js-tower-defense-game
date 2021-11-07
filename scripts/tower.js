@@ -68,7 +68,7 @@ class tower {
     }
     if (this.type != "electric" && this.type != "shockwave") {
       context.save();
-      context.translate(this.x + 15, this.y + 15);
+      context.translate(this.x + 20, this.y + 25);
       try {
         if (this.closestDistance[1] != 9999) {
           let nextRotaion =
@@ -110,7 +110,7 @@ class tower {
     if (this.closestDistance[1] != undefined) {
       // console.log(enemies[towers[0].closestDistance[1]].x);
       try {
-        context.rotate(this.currentRotation);
+        context.rotate(this.currentRotation + (30 * Math.PI) / 180);
       } catch (e) {
         //console.log("cope");
       }
@@ -120,7 +120,7 @@ class tower {
     } else if (this.type == "shockwave") {
       context.drawImage(shockWavePic, this.x, this.y, 64, 64);
     } else {
-      context.drawImage(towerPic, -32, -32, 64, 64);
+      context.drawImage(towerPic, -20, -25, 39, 50);
     }
     context.restore();
 

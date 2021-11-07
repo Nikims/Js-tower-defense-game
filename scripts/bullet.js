@@ -7,8 +7,8 @@ class bullet {
   IremberTarget = {};
   bulletRotation;
   constructor(source, target, dmg) {
-    this.x = source.x;
-    this.y = source.y;
+    this.x = source.x + 20;
+    this.y = source.y + 30;
     this.source = source;
     this.dmg = source.dmg;
     this.target = target;

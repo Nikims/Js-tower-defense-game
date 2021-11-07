@@ -34,7 +34,7 @@ class towerSpawner {
     } else if (this.type == "shockwave") {
       context.drawImage(shockWavePic, this.x, this.y, 60, 60);
     } else {
-      context.drawImage(towerPic, this.x, this.y, 60, 60);
+      context.drawImage(towerPic, this.x, this.y, 40, 50);
     }
     if (money < 200) {
       context.fillStyle = "red";
