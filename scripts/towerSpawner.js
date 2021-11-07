@@ -16,7 +16,7 @@ class towerSpawner {
     if (this.currentlyDragging) {
       //  console.log(mouseX - this.x);
       this.x = mouseX - 30;
-      this.y = mouseY - 30;
+      this.y = mouseY - 60;
 
       //this.y = deltaMouseY +  (deltaMouseY - this.y);
       deltaMouseX = mouseX;
@@ -57,7 +57,7 @@ class towerSpawner {
             Math.sqrt(
               Math.pow(mouseX - 10 - towers[i].x, 2) +
                 Math.pow(mouseY - 30 - towers[i].y, 2)
-            ) < (towers[i].type == "sniper" ? 100 : towers[i].range / 3)
+            ) < 60
           ) {
             numOfCollisions++;
             this.currentlyDragging = false;
@@ -66,8 +66,10 @@ class towerSpawner {
         }
         if (numOfCollisions == 0) {
           towers.push(
-            new tower(mouseX - 20, mouseY - 20, this.type, towers.length)
+            new tower(mouseX - 30, mouseY - 60, this.type, towers.length)
           );
+          selectedTower = towers.indexOf(towers[towers.length - 1]);
+
           if (this.type == "shockwave") {
             towers[towers.length - 1].dmg = 2;
           }

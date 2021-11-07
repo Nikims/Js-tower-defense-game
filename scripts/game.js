@@ -1,6 +1,7 @@
 // Creating variables
 let updates = 0;
 mapEditMode = 0;
+devMode = 0;
 mapImgs = [];
 mapImgs[0] = new Image();
 mapImgs[0].src = "map1fixed.png";
@@ -73,6 +74,9 @@ upgradeboxes.push(new upgradeBox(950, 500, "Change target Mode"));
 
 currentWave = 0;
 money = 300;
+if (devMode) {
+  money = 9999999999999;
+}
 // function drawCircle(radius) {
 //   if (circlesCoords.get(radius) != undefined) {
 //   } else {
@@ -333,7 +337,7 @@ function mouseup() {
   if (towers.length > 0) {
     foriin(towers, () => {
       if (
-        areColliding(mouseX, mouseY, 10, 10, towers[i].x, towers[i].y, 20, 50)
+        areColliding(mouseX, mouseY, 10, 10, towers[i].x, towers[i].y, 64, 64)
       ) {
         numOfCollisions++;
         towerToBeSelected = i;

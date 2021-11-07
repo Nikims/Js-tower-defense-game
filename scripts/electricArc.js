@@ -16,8 +16,14 @@ class arc {
   updateArc() {
     if (updates < this.updatesAtStart + 15) {
       for (let i = 1; i < this.nodes.length; i++) {
-        this.nodes[i].health -= this.damage;
-        money += this.damage;
+        if (this.nodes[i].health - this.damage < 0) {
+          this.nodes[i].health = -1;
+          arcs.splice(arcs.indexOf(this), 1);
+
+          money += 200;
+        } else {
+          this.nodes[i].health -= this.damage;
+        }
       }
     } else {
       arcs.splice(arcs.indexOf(this), 1);
