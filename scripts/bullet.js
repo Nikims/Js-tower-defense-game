@@ -48,6 +48,9 @@ class bullet {
             } else {
               enemies[i].health = -1;
               money += 40;
+              particleSystems.push(
+                new ParticleSystem({ x: this.x, y: this.y })
+              );
             }
 
             // if (this.source.type == "shockwave") {

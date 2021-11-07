@@ -134,6 +134,10 @@ enemies = [];
 // }
 function update() {
   //passive income grindset
+  for (i = 0; i < particleSystems.length; i++) {
+    particleSystems[i].updateParticles();
+  }
+ 
   if (updates % 50 == 0) {
     money += 15;
   }
@@ -247,6 +251,10 @@ function draw() {
     context.fillStyle = "red";
     context.font = "50px Ariel";
     context.fillText("Game over!", 170, 250);
+  }
+
+  for (i = 0; i < particleSystems.length; i++) {
+    particleSystems[i].drawParticles();
   }
 
   // tuk naprogramirai kakvo da se risuva
