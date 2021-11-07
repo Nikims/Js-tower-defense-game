@@ -194,7 +194,7 @@ class tower {
         this.closestDistance[0] < this.range
       ) {
         //console.log(this.dmg);
-        if (this.type != "shockwave") {
+        if (this.type != "shockwave" && this.type != "electric") {
           switch (this.targetMode) {
             case 0:
               bullets[0].push(new bullet(this, this.lowestHp[1], this.dmg));
