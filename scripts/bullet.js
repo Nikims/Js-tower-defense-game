@@ -28,8 +28,8 @@ class bullet {
     );
     this.x -= 7 * Math.sin(xDistToNextNode / dist);
     this.y -= 7 * Math.sin(yDistToNextNode / dist);
-    if (enemies.length != 0) {
-      for (let i = 0; i < enemies.length; i++) {
+    if (this.source.enemiesInRange.length != 0) {
+      for (let i = 0; i < this.source.enemiesInRange.length; i++) {
         if (this.canTakeDamage) {
           if (
             areColliding(
@@ -37,16 +37,16 @@ class bullet {
               this.y,
               5,
               5,
-              enemies[i].x,
-              enemies[i].y,
+              this.source.enemiesInRange[i].x,
+              this.source.enemiesInRange[i].y,
               30,
               30
             )
           ) {
-            if (enemies[i].health - this.dmg > 0) {
-              enemies[i].health -= this.dmg;
+            if (this.source.enemiesInRange[i].health - this.dmg > 0) {
+              this.source.enemiesInRange[i].health -= this.dmg;
             } else {
-              enemies[i].health = -1;
+              this.source.enemiesInRange[i].health = -1;
               money += 40;
               particleSystems.push(
                 new ParticleSystem({ x: this.x, y: this.y })
@@ -64,10 +64,9 @@ class bullet {
               console.log("shit");
             }
             if (this.canTakeDamage) {
+              this.canTakeDamage = false;
               if (this.type != "shockwave") {
                 bullets[1].splice(bullets.indexOf(this), 1);
-              } else {
-                this.canTakeDamage = false;
               }
               // bullets[1].splice(bullets[1].indexOf(this));
             }

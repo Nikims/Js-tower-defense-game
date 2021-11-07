@@ -77,27 +77,31 @@ class tower {
           switch (this.targetMode) {
             case 0:
               nextRotaion = Math.atan2(
-                this.y - this.lowestHp[1].y,
-                this.x - this.lowestHp[1].x
+                this.y - 20 - this.lowestHp[1].y,
+                this.x - 5 - this.lowestHp[1].x
               );
 
               break;
             case 1:
               nextRotaion = Math.atan2(
-                this.y - this.closestDistance[1].y,
-                this.x - this.closestDistance[1].x
+                this.y - 20 - this.closestDistance[1].y,
+                this.x - 5 - this.closestDistance[1].x
               );
               break;
             case 2:
               nextRotaion = Math.atan2(
-                this.y - this.enemiesInRange[0].y,
-                this.x - this.enemiesInRange[0].x
+                this.y - 20 - this.enemiesInRange[0].y,
+                this.x - 5 - this.enemiesInRange[0].x
               );
               break;
             case 3:
               nextRotaion = Math.atan2(
-                this.y - this.enemiesInRange[this.enemiesInRange.length - 1].y,
-                this.x - this.enemiesInRange[this.enemiesInRange.length - 1].x
+                this.y -
+                  20 -
+                  this.enemiesInRange[this.enemiesInRange.length - 1].y,
+                this.x -
+                  5 -
+                  this.enemiesInRange[this.enemiesInRange.length - 1].x
               );
               break;
           }
@@ -224,13 +228,7 @@ class tower {
           for (let i = 0; i < 370; i += 10) {
             bullets[1].push(
               new bullet(
-                {
-                  x: this.x,
-                  y: this.y,
-                  type: this.type,
-                  range: this.range,
-                  dmg: this.dmg,
-                },
+                this,
                 {
                   x: this.x + this.range * Math.cos((i * Math.PI) / 180),
                   y: this.y + this.range * Math.sin((i * Math.PI) / 180),
