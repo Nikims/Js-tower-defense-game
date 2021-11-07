@@ -64,9 +64,10 @@ class bullet {
               console.log("shit");
             }
             if (this.canTakeDamage) {
-              this.canTakeDamage = false;
               if (this.type != "shockwave") {
                 bullets[1].splice(bullets.indexOf(this), 1);
+              } else {
+                this.canTakeDamage = false;
               }
               // bullets[1].splice(bullets[1].indexOf(this));
             }
