@@ -240,7 +240,8 @@ function draw() {
   }
   if (towers.length > 0) {
     context.fillText(
-      "Target mode: " + towers[selectedTower].targetMode,
+      "Target mode: " +
+        towers[selectedTower].targetModes[towers[selectedTower].targetMode],
       650,
       20
     );
@@ -331,10 +332,10 @@ function mouseup() {
           }
         }
         if (i == 3) {
-          if (towers[selectedTower].targetMode == "closest") {
-            towers[selectedTower].targetMode = "lowestHp";
+          if (towers[selectedTower].targetMode < 3) {
+            towers[selectedTower].targetMode++;
           } else {
-            towers[selectedTower].targetMode = "closest";
+            towers[selectedTower].targetMode = 0;
           }
         }
       }

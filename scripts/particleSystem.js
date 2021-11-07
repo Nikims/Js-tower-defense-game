@@ -24,7 +24,7 @@ class Particle {
     this.source = source;
     this.speedX = Math.random() * 5 - 2.5;
     this.speedY = Math.random() * 5 - 2.5;
-    this.applyForce(0, 0.2);
+    this.applyForce(0, 0.1);
   }
   update() {
     this.beenAliveFor++;

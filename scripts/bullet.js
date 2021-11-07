@@ -26,8 +26,8 @@ class bullet {
     let dist = Math.sqrt(
       Math.pow(xDistToNextNode, 2) + Math.pow(yDistToNextNode, 2)
     );
-    this.x -= 6 * Math.sin(xDistToNextNode / dist);
-    this.y -= 6 * Math.sin(yDistToNextNode / dist);
+    this.x -= 7 * Math.sin(xDistToNextNode / dist);
+    this.y -= 7 * Math.sin(yDistToNextNode / dist);
     if (enemies.length != 0) {
       for (let i = 0; i < enemies.length; i++) {
         if (this.canTakeDamage) {

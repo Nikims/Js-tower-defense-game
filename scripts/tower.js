@@ -13,7 +13,8 @@ class tower {
   lowestHp = [];
   currentRotation = 0;
   dmg = 30;
-  targetMode = "lowestHp";
+  targetModes = ["lowestHp", "closest", "first", "last"];
+  targetMode = 0;
   price = [100, 100, 100];
 
   constructor(x, y, type, id) {
@@ -71,19 +72,48 @@ class tower {
       context.save();
       context.translate(this.x + 20, this.y + 25);
       try {
+        let nextRotaion = 0;
         if (this.closestDistance[1] != 9999) {
-          let nextRotaion =
-            Math.atan2(
-              this.y -
-                (this.targetMode == "closest"
-                  ? this.closestDistance[1].y
-                  : this.lowestHp[1].y + 15),
-              this.x -
-                (this.targetMode == "closest"
-                  ? this.closestDistance[1].x
-                  : this.lowestHp[1].x + 15)
-            ) -
-            Math.PI / 2;
+          switch (this.targetMode) {
+            case 0:
+              nextRotaion = Math.atan2(
+                this.y - this.lowestHp[1].y,
+                this.x - this.lowestHp[1].x
+              );
+
+              break;
+            case 1:
+              nextRotaion = Math.atan2(
+                this.y - this.closestDistance[1].y,
+                this.x - this.closestDistance[1].x
+              );
+              break;
+            case 2:
+              nextRotaion = Math.atan2(
+                this.y - this.enemiesInRange[0].y,
+                this.x - this.enemiesInRange[0].x
+              );
+              break;
+            case 3:
+              nextRotaion = Math.atan2(
+                this.y - this.enemiesInRange[this.enemiesInRange.length - 1].y,
+                this.x - this.enemiesInRange[this.enemiesInRange.length - 1].x
+              );
+              break;
+          }
+          // let nextRotaion =
+          //   Math.atan2(
+          //     this.y -
+          //       (this.targetMode == "closest"
+          //         ? this.closestDistance[1].y
+          //         : this.lowestHp[1].y + 15),
+          //     this.x -
+          //       (this.targetMode == "closest"
+          //         ? this.closestDistance[1].x
+          //         : this.lowestHp[1].x + 15)
+          //   ) -
+          //   Math.PI / 2;
+
           if (
             !areColliding(
               this.currentRotation,
@@ -111,7 +141,7 @@ class tower {
       if (this.closestDistance[1] != undefined) {
         // console.log(enemies[towers[0].closestDistance[1]].x);
         try {
-          context.rotate(this.currentRotation + (0 * Math.PI) / 180);
+          context.rotate(this.currentRotation - (90 * Math.PI) / 180);
         } catch (e) {
           //console.log("cope");
         }
@@ -164,16 +194,32 @@ class tower {
         this.closestDistance[0] < this.range
       ) {
         //console.log(this.dmg);
-        if (this.type == "main" || this.type == "sniper") {
-          if (this.targetMode == "lowestHp") {
-            bullets[0].push(new bullet(this, this.lowestHp[1], this.dmg));
-          }
-          if (this.targetMode == "closest") {
-            bullets[0].push(
-              new bullet(this, this.closestDistance[1], this.dmg)
-            );
+        if (this.type != "shockwave") {
+          switch (this.targetMode) {
+            case 0:
+              bullets[0].push(new bullet(this, this.lowestHp[1], this.dmg));
+              break;
+            case 1:
+              bullets[0].push(
+                new bullet(this, this.closestDistance[1], this.dmg)
+              );
+              break;
+            case 2:
+              bullets[0].push(
+                new bullet(this, this.enemiesInRange[0], this.dmg)
+              );
+              break;
+            case 3:
+              bullets[0].push(
+                new bullet(
+                  this,
+                  this.enemiesInRange[this.enemiesInRange.length - 1],
+                  this.dmg
+                )
+              );
           }
         }
+
         if (this.type == "shockwave") {
           for (let i = 0; i < 370; i += 10) {
             bullets[1].push(
