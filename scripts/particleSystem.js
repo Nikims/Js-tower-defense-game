@@ -24,7 +24,7 @@ class Particle {
     this.source = source;
     this.speedX = Math.random() * 5 - 2.5;
     this.speedY = Math.random() * 5 - 2.5;
-    this.applyForce(0, 0.1);
+    // this.applyForce(0, 0.1);
   }
   update() {
     this.beenAliveFor++;
@@ -32,10 +32,10 @@ class Particle {
     this.y += this.speedY;
     this.speedX += this.acellX;
     this.speedY += this.acellY;
-    if (this.y > this.source.y + 30) {
-      this.speedY = 0;
-      this.speedX = 0;
-    }
+    // if (this.y > this.source.y + 30) {
+    //   this.speedY = 0;
+    //   this.speedX = 0;
+    // }
   }
   drawSelf() {
     context.fillRect(this.x, this.y, 5, 5);
@@ -60,7 +60,7 @@ class ParticleSystem {
 
       if (
         this.particles[i].beenAliveFor >
-        90 + Math.round(Math.random() * 20)
+        30 + Math.round(Math.random() * 20)
       ) {
         this.particles.splice(i, 1);
       }

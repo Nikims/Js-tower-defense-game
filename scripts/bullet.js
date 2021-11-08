@@ -32,6 +32,8 @@ class bullet {
     let dist = Math.sqrt(
       Math.pow(xDistToNextNode, 2) + Math.pow(yDistToNextNode, 2)
     );
+    let speedX = 7 * Math.sin(xDistToNextNode / dist);
+    let speedY = 7 * Math.cos(yDistToNextNode / dist);
     this.x -= 7 * Math.sin(xDistToNextNode / dist);
     this.y -= 7 * Math.sin(yDistToNextNode / dist);
     if (this.source.enemiesInRange.length != 0) {
@@ -57,6 +59,22 @@ class bullet {
               particleSystems.push(
                 new ParticleSystem({ x: this.x, y: this.y })
               );
+              for (
+                let j = 0;
+                j <
+                particleSystems[particleSystems.length - 1].particles.length;
+                j++
+              ) {
+                if (this.source.type == "shockwave") {
+                  particleSystems[particleSystems.length - 1].particles[
+                    j
+                  ].applyMomentum(-1 * speedX, -1 * speedY);
+                } else {
+                  particleSystems[particleSystems.length - 1].particles[
+                    j
+                  ].applyMomentum(-1 * speedX, 1 * speedY);
+                }
+              }
             }
 
             // if (this.source.type == "shockwave") {
