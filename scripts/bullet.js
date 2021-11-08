@@ -6,7 +6,7 @@ class bullet {
   target = 0;
   IremberTarget = {};
   bulletRotation;
-  canTakeDamage = true;
+  canTakeDamageTo = [];
   constructor(source, target, dmg) {
     this.x = source.x + 20;
     this.y = source.y + 30;
@@ -19,6 +19,12 @@ class bullet {
     this.IremberTarget.y -= (this.y - this.target.y) * 4;
     this.bulletRotation =
       Math.atan2(this.y - this.target.y, this.x - this.target.x) - Math.PI / 2;
+
+    for (let i = 0; i < this.source.enemiesInRange.length; i++) {
+      if (this.source.enemiesInRange[i].health > 0) {
+        this.canTakeDamageTo[this.source.enemiesInRange[i].trueId] = true;
+      }
+    }
   }
   flyTo() {
     let xDistToNextNode = this.x - this.target.x;
@@ -30,7 +36,7 @@ class bullet {
     this.y -= 7 * Math.sin(yDistToNextNode / dist);
     if (this.source.enemiesInRange.length != 0) {
       for (let i = 0; i < this.source.enemiesInRange.length; i++) {
-        if (this.canTakeDamage) {
+        if (this.canTakeDamageTo[this.source.enemiesInRange[i].trueId]) {
           if (
             areColliding(
               this.x,
@@ -60,16 +66,17 @@ class bullet {
             //   this.source.type == "main" ||
             //   this.source.type == "sniper"
             // ) {
-            if (this.canTakeDamage == false) {
-              console.log("shit");
-            }
-            if (this.canTakeDamage) {
-              this.canTakeDamage = false;
-              if (this.type != "shockwave") {
-                bullets[1].splice(bullets.indexOf(this), 1);
+            this.canTakeDamageTo[enemies[i].trueId] = false;
+            if (this.source.type == "shockwave") {
+              for (let j = 0; j < this.source.bullets.length; j++) {
+                this.source.bullets[j].canTakeDamageTo[
+                  this.source.enemiesInRange[i].trueId
+                ] = false;
               }
-              // bullets[1].splice(bullets[1].indexOf(this));
             }
+
+            // bullets[1].splice(bullets[1].indexOf(this));
+
             break;
           }
         }
@@ -79,12 +86,9 @@ class bullet {
     if (
       areColliding(this.x, this.y, 5, 5, this.target.x, this.target.y, 30, 30)
     ) {
-      if (this.source.type == "shockwave") {
-        bullets[1].splice(bullets[1].indexOf(this), 1);
-      } else if (this.source.type == "sniper" || this.source.type == "main") {
-        bullets[0].splice(bullets[0].indexOf(this), 1);
-      }
+      this.source.bullets.splice(bullets[1].indexOf(this), 1);
     }
+
     // this.y += 5 * Math.sin(this.y / dist);
     else {
       //bullets.splice(bullets.indexOf(this), 1);

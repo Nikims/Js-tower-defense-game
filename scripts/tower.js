@@ -16,7 +16,7 @@ class tower {
   targetModes = ["lowestHp", "closest", "first", "last"];
   targetMode = 0;
   price = [100, 100, 100];
-
+  bullets = [];
   constructor(x, y, type, id) {
     this.type = type;
     this.x = x;
@@ -31,7 +31,7 @@ class tower {
       this.dmg = 1;
     }
     if (this.type == "shockwave") {
-      this.dmg = 5;
+      this.dmg = 20;
       this.shootingSpeed = 100;
     }
     // drawCircle(this.range);
@@ -201,20 +201,20 @@ class tower {
         if (this.type != "shockwave" && this.type != "electric") {
           switch (this.targetMode) {
             case 0:
-              bullets[0].push(new bullet(this, this.lowestHp[1], this.dmg));
+              this.bullets.push(new bullet(this, this.lowestHp[1], this.dmg));
               break;
             case 1:
-              bullets[0].push(
+              this.bullets.push(
                 new bullet(this, this.closestDistance[1], this.dmg)
               );
               break;
             case 2:
-              bullets[0].push(
-                new bullet(this, this.enemiesInRange[0], this.dmg)
+              this.bullets.push(
+                new bullet(this, this.enemiesInRange, this.dmg)
               );
               break;
             case 3:
-              bullets[0].push(
+              this.bullets.push(
                 new bullet(
                   this,
                   this.enemiesInRange[this.enemiesInRange.length - 1],
@@ -226,7 +226,7 @@ class tower {
 
         if (this.type == "shockwave") {
           for (let i = 0; i < 370; i += 10) {
-            bullets[1].push(
+            this.bullets.push(
               new bullet(
                 this,
                 {

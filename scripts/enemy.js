@@ -55,6 +55,9 @@ class enemy {
       } else {
         this.killSelf();
         health -= 20;
+        if (health < 0) {
+          isGameOver = true;
+        }
       }
     }
   }

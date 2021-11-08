@@ -90,10 +90,11 @@ if (devMode) {
 //   }
 // }
 
-testSpawner = new towerSpawner(700, 100, "main");
-shockwaveTowerSpawner = new towerSpawner(800, 100, "shockwave");
-sniperSpawner = new towerSpawner(900, 100, "sniper");
-electricsSpawner = new towerSpawner(900, 200, "electric");
+spawners = [];
+spawners.push(new towerSpawner(700, 100, "main"));
+spawners.push(new towerSpawner(800, 100, "shockwave"));
+spawners.push(new towerSpawner(900, 100, "sniper"));
+spawners.push(new towerSpawner(900, 200, "electric"));
 
 class node {
   x = 0;
@@ -134,6 +135,10 @@ enemies = [];
 // }
 function update() {
   //passive income grindset
+  // if (health < 0) {
+  //   isGameOver = true;
+  // }
+  //moved this over to the enemy class
   for (i = 0; i < particleSystems.length; i++) {
     particleSystems[i].updateParticles();
   }
@@ -146,18 +151,16 @@ function update() {
       arcs[i].updateArc();
     });
     //to avoid unnecessary calculations
-
-    testSpawner.updatePos();
-    shockwaveTowerSpawner.updatePos();
-    sniperSpawner.updatePos();
-    electricsSpawner.updatePos();
+    foriin(spawners, () => {
+      spawners[i].updatePos();
+    });
 
     updates++;
-    for (i = 0; i < bullets.length; i++) {
-      for (j = 0; j < bullets[i].length; j++) {
-        bullets[i][j].flyTo();
-      }
-    }
+    // for (i = 0; i < bullets.length; i++) {
+    //   for (j = 0; j < bullets[i].length; j++) {
+    //     bullets[i][j].flyTo();
+    //   }
+    // }
 
     if (updates % waves[currentWave].time == 0) {
       if (waves[currentWave].number > 0) {
@@ -181,6 +184,9 @@ function update() {
     });
     foriin(towers, () => {
       towers[i].aim();
+      for (j = 0; j < towers[i].bullets.length; j++) {
+        towers[i].bullets[j].flyTo();
+      }
     });
 
     // for (i = 0; i < towers.length; i++) {
@@ -202,6 +208,9 @@ function draw() {
 
   foriin(towers, () => {
     towers[i].drawSelf();
+    for (j = 0; j < towers[i].bullets.length; j++) {
+      towers[i].bullets[j].drawSelf();
+    }
   });
 
   if (mapEditMode == 1) {
@@ -217,19 +226,18 @@ function draw() {
       }
     });
   }
-  foriin(bullets, () => {
-    for (j = 0; j < bullets[i].length; j++) {
-      bullets[i][j].drawSelf();
-    }
-  });
+  // foriin(bullets, () => {
+  //   for (j = 0; j < bullets[i].length; j++) {
+  //     bullets[i][j].drawSelf();
+  //   }
+  // });
   foriin(arcs, () => {
     arcs[i].drawSelf();
   });
   // context.drawImage(towerPic, tempTower.x, tempTower.y, 60, 60);
-  testSpawner.drawSelf();
-  shockwaveTowerSpawner.drawSelf();
-  sniperSpawner.drawSelf();
-  electricsSpawner.drawSelf();
+  foriin(spawners, () => {
+    spawners[i].drawSelf();
+  });
 
   context.font = "20px Ariel";
   context.fillText(money, 20, 20);
@@ -293,16 +301,16 @@ function keyup(key) {
 }
 
 function mousedown() {
-  if (
-    shockwaveTowerSpawner.currentlyDragging == false &&
-    testSpawner.currentlyDragging == false &&
-    sniperSpawner.currentlyDragging == false &&
-    electricsSpawner.currentlyDragging == false
-  ) {
-    testSpawner.mouseDownUpdate();
-    shockwaveTowerSpawner.mouseDownUpdate();
-    sniperSpawner.mouseDownUpdate();
-    electricsSpawner.mouseDownUpdate();
+  let numOfCurrentlydragging = 0;
+  foriin(spawners, () => {
+    if (spawners[i].currentlyDragging) {
+      numOfCurrentlydragging++;
+    }
+  });
+  if (numOfCurrentlydragging == 0) {
+    foriin(spawners, () => {
+      spawners[i].mouseDownUpdate();
+    });
   }
 }
 function mouseup() {
@@ -341,11 +349,9 @@ function mouseup() {
       }
     });
   });
-
-  shockwaveTowerSpawner.mouseUpUpdate();
-  testSpawner.mouseUpUpdate();
-  sniperSpawner.mouseUpUpdate();
-  electricsSpawner.mouseUpUpdate();
+  foriin(spawners, () => {
+    spawners[i].mouseUpUpdate();
+  });
 
   numOfCollisions = 0;
   towerToBeSelected = 0;
