@@ -32,10 +32,11 @@ class bullet {
     let dist = Math.sqrt(
       Math.pow(xDistToNextNode, 2) + Math.pow(yDistToNextNode, 2)
     );
-    let speedX = 7 * Math.sin(xDistToNextNode / dist);
-    let speedY = 7 * Math.cos(yDistToNextNode / dist);
+
     this.x -= 7 * Math.sin(xDistToNextNode / dist);
     this.y -= 7 * Math.sin(yDistToNextNode / dist);
+    let speedX = 7 * Math.sin(xDistToNextNode / dist);
+    let speedY = 7 * Math.cos(yDistToNextNode / dist);
     if (this.source.enemiesInRange.length != 0) {
       for (let i = 0; i < this.source.enemiesInRange.length; i++) {
         if (this.canTakeDamageTo[this.source.enemiesInRange[i].trueId]) {
@@ -65,7 +66,7 @@ class bullet {
                 particleSystems[particleSystems.length - 1].particles.length;
                 j++
               ) {
-                if (this.source.type == "shockwave") {
+                if (this.y > this.source.enemiesInRange[i].y) {
                   particleSystems[particleSystems.length - 1].particles[
                     j
                   ].applyMomentum(-1 * speedX, -1 * speedY);
